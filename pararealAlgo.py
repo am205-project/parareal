@@ -7,7 +7,7 @@ import time
 
 def get_big_arrays():
   '''Generate two big random arrays.'''
-  N = 10000      # A big number, the size of the arrays.
+  N = 100000       # A big number, the size of the arrays.
   seed = 42;
   np.random.seed(seed)  # Set the random seed
   return np.random.random(N), np.random.random(N)
