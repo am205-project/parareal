@@ -57,14 +57,23 @@ Harvard University, Applied Math 205 Final Project}
     \begin{@twocolumnfalse}
     \maketitle
     \begin{abstract}
-We implement the parareal algorithm to solve various ODEs and compare in terms of accuracy, speedup and efficiency.  We explore the effect of using differnt solution operators (a course and a fine as required by the method)  The majority of our code is written in python using mpi4py to parallelize.  To compare to more performance-based languages, we compare certain codes to an implementation in C++.
+    We implement the parareal algorithm to solve various ODEs and compare in
+    terms of accuracy, speedup and efficiency. We explore the effect of using
+    differnt solution operators (a coarse and a fine as required by the method)
+    The majority of our code is written in python using mpi4py to parallelize.
+    To compare to more performance-based languages, we compare certain codes to
+    an implementation in C++.
     \end{abstract}
   \end{@twocolumnfalse}
 ]
 \section{Background}
 
 \subsection{Numerical Methods and Parallelization}
-Solving systems of differential equations can be a computationally expensive task.  The error of most algorithms scales on the stepsize of the discretization of time.  However, stepsize in time is also proportional to the computation required.  The parareal algorithm, developed by YADA YADA.  An alternative would be to parallelize by space - 
+Solving systems of differential equations can be a computationally expensive
+task. The error of most algorithms scales on the stepsize of the discretization
+of time. However, stepsize in time is also proportional to the computation
+required. The parareal algorithm, developed by YADA YADA. An alternative would
+be to parallelize by space - 
 
 \subsection{Stability of the Parareal}
 
@@ -96,9 +105,10 @@ We wished to explore certain tests
 \section{Results}
 We compared various runs of 
 
-\subsection{Comparison to Serial with $G_{fine}$ as \\a Forward Euler with Smaller $\Delta t$}
+\subsection{Comparison to Serial with $g_{fine}$ as \\a Forward Euler with
+Smaller $\Delta t$}
 
-\subsection{Comparison to Serial with $G_{fine}$ as \\Higher Order Methods}
+\subsection{Comparison to Serial with $g_{fine}$ as \\Higher Order Methods}
 
 \subsection{Comparison to a Forward Euler \\Parallelized by Space}
 
