@@ -45,7 +45,6 @@
 \author{Wesley Chen, Brandon Sim, Andy Shi \\
 Harvard University, Applied Math 205 Final Project}
 \date{December 15, 2014}
-\maketitle
 
 % No indentation for new paragraphs
 \setlength\parindent{0pt}
@@ -54,10 +53,28 @@ Harvard University, Applied Math 205 Final Project}
 \setlength\parskip{2ex}
 
 % Put your stuff here
+\twocolumn[
+    \begin{@twocolumnfalse}
+    \maketitle
+    \begin{abstract}
 
-\section{Abstract}
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec a diam
+    lectus.  Sed sit amet ipsum mauris. Maecenas congue ligula ac quam viverra
+    nec consectetur ante hendrerit. Donec et mollis dolor. Praesent et diam eget
+    libero egestas mattis sit amet vitae augue. Nam tincidunt congue enim, ut
+    porta lorem lacinia consectetur. Donec ut libero sed arcu vehicula ultricies
+    a non tortor.  Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+    Aenean ut gravida lorem. Ut turpis felis, pulvinar a semper sed, adipiscing
+    id dolor. Pellentesque auctor nisi id magna consequat sagittis. Curabitur
+    dapibus enim sit amet elit pharetra tincidunt feugiat nisl imperdiet. Ut
+    convallis libero in urna ultrices accumsan.  Donec sed odio eros. Donec
+    viverra mi quis quam pulvinar at malesuada arcu rhoncus. Cum sociis natoque
+    penatibus et magnis dis parturient montes, nascetur ridiculus mus. In rutrum
+    accumsan ultricies. Mauris vitae nisi at sem facilisis semper ac in est.
 
-We LIKE TO PLAY LEAGUE. 
+    \end{abstract}
+  \end{@twocolumnfalse}
+]
 
 \section{Background}
 
@@ -66,21 +83,19 @@ League is cool.
 \section{Methodology}
 
 \begin{algorithm}[t]
- \KwIn{Replication parameter $C$.}
- \KwIn{$P$ processors arranged into $C$ rows and $T=P/C$ teams.}
- \KwIn{Set $\mathcal{T}$ of $N$ particles and associated charges and results.}
- In parallel on all processors, $r = $ rank\;
- Scatter particles from master to team leaders, $\mathcal{T}_t$\;
- Broadcast $\mathcal{T}_t$ from team leader to team members\;
- Copy $\mathcal{T}_t$, the set of targets, to $\mathcal{S}_t$, the set of sources\;
- Given $c$th member of team $t$, shift $\mathcal{S}_t$ by $c$ along row\;
- \For{\normalfont{iteration} $i < 1$}{
-   Compute symmetric interaction of $\mathcal{T}_t$ and $\mathcal{S}_t$\;
- }
- Reduce the results within a team\;
- Gather the results between team leaders\;
- \caption{Symmetric Diagonal $N$-body}
- \label{alg:symmdiag}
+    \KwIn{Temporal discretization $t^n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
+    \KwIn{Coarse scheme $g_{\Delta t}$}
+    \KwIn{Finer scheme $g_{\textnormal{fine}}$}
+    Compute $u_1^{n+1} = g_{\Delta t}(t^n, u^n)$\;
+    Compute the corrections $\delta g^n(u_1^n) = g_{\textnormal{fine}}(t^n,
+    u^n) - g_{\Delta t}(t^n, u^n)$ in parallel\;
+    Add the prediction and correction terms as $u_2^{n+1} = g_{\Delta
+    t}(t^n, u_2^n) + \delta g^n(u_1^n)$\;
+    Repeat steps 2 and 3, incrementing the iteration label and using $u_{k+1}^0
+    = u^0$ as the initial condition\
+    }
+ \caption{Parareal}
+ \label{alg:parareal}
 \end{algorithm}
 
 ROAR
