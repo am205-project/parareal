@@ -41,7 +41,7 @@
 
 
 \begin{document}
-\title{Parareal Algorithm}
+\title{Explorations to Optimize the Parareal Algorithm \\to Solve ODEs in Given Applications}
 \author{Wesley Chen, Brandon Sim, Andy Shi \\
 Harvard University, Applied Math 205 Final Project}
 \date{December 15, 2014}
@@ -57,13 +57,20 @@ Harvard University, Applied Math 205 Final Project}
 
 \section{Abstract}
 
-We LIKE TO PLAY LEAGUE. 
+We implement the parareal algorithm to solve various ODEs and compare in terms of accuracy, speedup and efficiency.  We explore the effect of using differnt solution operators (a course and a fine as required by the method)  The majority of our code is written in python using mpi4py to parallelize.  To compare to more performance-based languages, we compare certain codes to an implementation in C++.
 
 \section{Background}
 
-League is cool.
+\subsection{Numerical Methods and Parallelization}
+Solving systems of differential equations can be a computationally expensive task.  The error of most algorithms scales on the stepsize of the discretization of time.  However, stepsize in time is also proportional to the computation required.  The parareal algorithm, developed by YADA YADA.  An alternative would be to parallelize by space - 
+
+\subsection{Stability of the Parareal}
+
+\subsection{Error of the Parareal}
 
 \section{Methodology}
+
+The general parareal method, as described by YADA YADA can be SEEN BELOW YAR
 
 \begin{algorithm}[t]
  \KwIn{Replication parameter $C$.}
@@ -83,5 +90,26 @@ League is cool.
  \label{alg:symmdiag}
 \end{algorithm}
 
-ROAR
+\subsection{Explored Tests}
+We wished to explore certain tests
+
+\section{Results}
+We compared various runs of 
+
+\subsection{Comparison to Serial with $G_{fine}$ as \\a Forward Euler with Smaller $\Delta t$}
+
+\subsection{Comparison to Serial with $G_{fine}$ as \\Higher Order Methods}
+
+\subsection{Comparison to a Forward Euler \\Parallelized by Space}
+
+\subsection{Comparison to C++ Implementations}
+
+\subsection{Summary of Performance}
+
+\section{Discussion}
+
+\section{Conclusion and Future Work}
+
+\section{References}
+
 \end{document}
