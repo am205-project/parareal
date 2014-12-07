@@ -36,7 +36,7 @@ if __name__ == "__main__":
         return lam * u
 
     init = np.array([1.])
-
+    
     res = forward_euler(deriv, init, 0, 1, 0.01)[:,0]
     
     exact = np.exp(np.linspace(0,1,len(res)))

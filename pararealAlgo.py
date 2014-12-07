@@ -58,6 +58,7 @@ def serial_coarse(deriv, upast, dt, tmin, tmax, numSteps):
   # call forward euler per step and store in vector
   for ind in xrange(numSteps):
     # get a coarse answer
+    # TODO is this upast[ind] off by one?
     upast[ind] = forward_euler_step(deriv, times[ind], upast[ind], dt)
   return upast
 
