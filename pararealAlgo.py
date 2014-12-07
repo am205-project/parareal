@@ -1,48 +1,65 @@
-# Example to test python and MPI install from Wesley
+# Generic Parareal Implementation
 # Updated 12/6/2014
 
 from mpi4py import MPI
 import numpy as np
 import time
 
-def get_big_arrays():
-  '''Generate two big random arrays.'''
-  N = 100000       # A big number, the size of the arrays.
-  seed = 42;
-  np.random.seed(seed)  # Set the random seed
-  return np.random.random(N), np.random.random(N)
+from serial_euler import forward_euler
 
-def serial_dot(a, b):
-  '''The dot-product of the arrays -- slow implementation using for-loop.'''
-  result = 0
-  for k in xrange(0, len(a)):
-    result += a[k] * b[k]
-  return result
+# Parareal begin
+def startParareal(deriv, init, k, tmin, tmax, numSteps, comm):
+  '''Starts running k iterations of the parareal algorithm.
+  In each iteration, the program runs the coarse method in serial, then fine corrections in parallel'''
 
-def parallel_dot(a, b, comm, p_root=0):
-  '''The parallel dot-product of the arrays a and b.
+  # get a coarse answer
+  u = serial_coarse(deriv, init, tmin, tmax, numSteps)[:,0]
+
+  # fine time steps
+  qualityFactor = 100
+  fine = numSteps * qualityFactor
+
+  # rethink logic here!
+  if k > 1:
+    for iteration in xrange(k-1):
+
+      # get a coarse answer
+      u = serial_coarse(deriv, init, tmin, tmax, numSteps)[:,0]
+
+      # pass in a coarse answer to refine and correct
+      corrections = parallel_corrections(deriv, u, time, comm, p_root=0)
+
+      # update u with the corrections
+      u += corrections
+
+  return u
+
+def serial_coarse(deriv, init, tmin, tmax, numSteps):
+  '''Runs a coarse numerical method in serial, as part of the parareal algorithm'''
+  # call forward euler
+  return forward_euler(deriv, init, tmin, tmax, numSteps)
+
+def parallel_corrections(u, tmin, tmax, numSteps, comm, p_root=0):
+  '''Parallel Portion of the Parareal Algorithm
   Assumes the arrays exist on process p_root and returns the result to
-  process p_root.
+  process p_root for a given iteration.
   By default, p_root = process 0.'''
   rank = comm.Get_rank()
   size = comm.Get_size()
 
-  # Broadcast the arrays to all processes
-  a = comm.bcast(a, root=p_root)
-  b = comm.bcast(b, root=p_root)
-
   # Save the number of tasks to a variable
-  numtasks = len(a)
+  # numtasks = len(u)
 
   # Start and end indices of the local dot product computed by function to allow for undivisble sizes
   start = getStart(numtasks, size, rank)
   end = getStart(numtasks, size, rank + 1)
 
   # Compute the partial dot product
-  local_dot = serial_dot(a[start:end], b[start:end])
+  #local_dot = serial_dot(a[start:end], b[start:end])
 
-  # Reduce the partial results to the root process
-  result = comm.reduce(local_dot, root=p_root)
+  # Gather the partial results to the root process
+  result = comm.gather(local_dot, root=p_root)
+
   return result
 
 def getStart(numtasks, size, rank):
@@ -54,32 +71,59 @@ def getStart(numtasks, size, rank):
   else:
     return numtasks / size * rank + numtasks % size
 
+
 if __name__ == '__main__':
   comm = MPI.COMM_WORLD
   rank = comm.Get_rank()
 
-  # Get big arrays on process 0
-  a, b = None, None
-  if rank == 0:
-    a, b = get_big_arrays()
+  # Example specific parameters and derivatives with IC
+  def deriv(t, u):
+    return lam * u
 
-  # Compute the dot product in parallel
+  init = np.array([1.])
+
+  tmin = 0.
+  tmax = 1.
+  numSteps = 100
+
+  init = np.array([1.])
+  ###
+
+  # Communciation barrier and timing function of MPI
   comm.barrier()
   p_start = MPI.Wtime()
-  p_dot = parallel_dot(a, b, comm)
+
+  # Use parareal algorithm
+  p_result = startParareal(deriv, init, tmin, tmax, step, comm)
+
+  # Communciation barrier and ending time with MPI timing function
   comm.barrier()
-  p_stop = MPI.Wtime()
+  p_stop = MPI.Wtime() 
 
   # Check and output results on process 0
   if rank == 0:
+
+    # compute serial result
     s_start = time.time()
-    s_dot = serial_dot(a, b)
+    s_result = forward_euler(deriv, init, 0, 1, 0.01)[:,0]
     s_stop = time.time()
-    print "Serial Time: %f secs" % (s_stop - s_start)
+
+    # compute exact result
+    e_result = np.exp(np.linspace(tmin, tmax, len(res)))
+
+    # compute errors
+    s_error = abs(s_result - e_result) / abs(e_result)
+    p_error = abs(p_result - e_result) / abs(e_result)
+
+    # print timers
+    print "Serial Time:   %f secs" % (s_stop - s_start)
     print "Parallel Time: %f secs" % (p_stop - p_start)
-    rel_error = abs(p_dot - s_dot) / abs(s_dot)
-    print "Parallel Result = %f" % p_dot
-    print "Serial Result   = %f" % s_dot
-    print "Relative Error  = %e" % rel_error
-    if rel_error > 1e-10:
-      print "***LARGE ERROR - POSSIBLE FAILURE!***"
+
+    # print results
+    print "Serial Result   = %f" % s_result
+    print "Parallel Result = %f" % p_result
+    print "Exact           = %f" % e_result
+
+    # print errors
+    print "Serial Relative Error    = %e" % s_error
+    print "Parallel Relative Error  = %e" % p_error

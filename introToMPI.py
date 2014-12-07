@@ -5,19 +5,7 @@ from mpi4py import MPI
 import numpy as np
 import time
 
-def get_big_arrays():
-  '''Generate two big random arrays.'''
-  N = 10000      # A big number, the size of the arrays.
-  seed = 42;
-  np.random.seed(seed)  # Set the random seed
-  return np.random.random(N), np.random.random(N)
-
-def serial_dot(a, b):
-  '''The dot-product of the arrays -- slow implementation using for-loop.'''
-  result = 0
-  for k in xrange(0, len(a)):
-    result += a[k] * b[k]
-  return result
+#from serial_euler import forward_euler
 
 def parallel_dot(a, b, comm, p_root=0):
   '''The parallel dot-product of the arrays a and b.
