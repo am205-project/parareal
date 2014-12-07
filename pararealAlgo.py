@@ -58,7 +58,7 @@ def serial_coarse(deriv, upast, dt, tmin, tmax, numSteps):
   # call forward euler per step and store in vector
   for ind in xrange(numSteps):
     # get a coarse answer
-    upast[ind] = forward_euler_step(deriv, times[ind], u[ind], dt)
+    upast[ind] = forward_euler_step(deriv, times[ind], upast[ind], dt)
   return upast
 
 def parallel_corrections(upast, tmin, tmax, numSteps, qualityFactor, comm, p_root=0):
