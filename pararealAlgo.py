@@ -1,9 +1,6 @@
 # Generic Parareal Implementation
 # Updated 12/6/2014
 
-# TODO 
-# Confirm that Euler_Step function does not repeat calculations - else should memoize and look up
-
 from mpi4py import MPI
 import numpy as np
 import time
@@ -27,6 +24,9 @@ def startParareal(deriv, init, k, tmin, tmax, numSteps, qualityFactor = 100, com
   upast = np.zeros(numSteps)
   unext = np.zeros(numSteps)
 
+  # all coarse
+  upast = forward_euler(deriv, init, tmin, tmax, numSteps)
+
   # if further iterations are required
   if k > 1:
     for iteration in xrange(k-1):
@@ -36,31 +36,36 @@ def startParareal(deriv, init, k, tmin, tmax, numSteps, qualityFactor = 100, com
 
       if rank == 0:
         # get a coarse answer for the next iteration, vectorized
-        unext = serial_coarse(deriv, upast, dt, tmin, tmax, numSteps)[:,0]
+        unext = serial_coarse_with_correction(deriv, init, corrections, dt, tmin, tmax, numSteps)
 
         # update unext for next iteration
         upast = copy.copy(unext)
 
-        # update unext with corrections computed with upast
-        # TODO check the edge case - this is correct?
-        for ind in xrange(numSteps-1):
-          unext[ind+1] += unext[ind] + corrections[ind]
-
   return unext
 
-def serial_coarse(deriv, upast, dt, tmin, tmax, numSteps):
+def serial_coarse_with_correction(deriv, init, corrections, dt, tmin, tmax, numSteps):
   '''Runs a coarse numerical method in serial, as part of the parareal algorithm.
   Will call the stepwise g_coarse function per step'''
+
+  unext = np.zeros(numSteps)
 
   # initialize times
   times = np.linspace(time_min, time_max, numSteps)[1:]
 
+  # initial condition
+  unext[0] = init
+
   # call forward euler per step and store in vector
-  for ind in xrange(numSteps):
+  for ind in xrange(numSteps-1):
     # get a coarse answer
     # TODO is this upast[ind] off by one?
-    upast[ind] = forward_euler_step(deriv, times[ind], upast[ind], dt)
-  return upast
+    unext[ind+1] = forward_euler_step(deriv, times[ind], unext[ind], dt)
+
+    # update unext with corrections computed with upast
+    for ind in xrange(numSteps-1):
+      unext[ind+1] += unext[ind] + corrections[ind]
+
+  return unext
 
 def parallel_corrections(upast, tmin, tmax, numSteps, qualityFactor, comm, p_root=0):
   '''Parallel Portion of the Parareal Algorithm
@@ -71,12 +76,12 @@ def parallel_corrections(upast, tmin, tmax, numSteps, qualityFactor, comm, p_roo
   rank = comm.Get_rank()
   size = comm.Get_size()
 
-  # Save the number of tasks
-  numtasks = len(numSteps)
+  # synonym for parallel
+  numtasks = numSteps
 
   # values for the fine computations
   fineNumSteps = numSteps*factor
-  fineDt = dt / factor
+  fineDt = dt / qualityFactor
 
   # broadcast upast
   upast = comm.broadcast(upast, root=p_rot)
@@ -90,20 +95,20 @@ def parallel_corrections(upast, tmin, tmax, numSteps, qualityFactor, comm, p_roo
 
   # in a loop, compute fine and then corrections one piece at a time that processor is responsible for, serially
   while (start < end):
-    fineResult = forward_euler(deriv, upast[start], times[start], times[start+1], fineNumSteps)[:,0]
+    fineResult = forward_euler(deriv, upast[start], times[start], times[start+1], fineNumSteps)
 
     # get difference for the last time step of the fine result and compare to coarse result answer for same time
-    difference = fineResult[-1] - upast[start]
+    difference = fineResult[-1] - upast[start+1]
     # concatenate the local results
-    local_unext = np.concatenate(local_unext, difference)
+    local_differences = np.concatenate(local_unext, difference)
 
     # move to solve next step
     start += 1
 
   # Gather the partial results to the root process
-  result = comm.gather(local_unext, root=p_root)
+  differences = comm.gather(local_differences, root=p_root)
 
-  return result
+  return differences
 
 def getStart(numtasks, size, rank):
   '''Returns optimally equal partioned index for the begin of the assigned array to divide'''
@@ -149,7 +154,7 @@ if __name__ == '__main__':
 
     # compute serial result
     s_start = time.time()
-    s_result = forward_euler(deriv, init, tmin, tmax, numSteps)[:,0]
+    s_result = forward_euler(deriv, init, tmin, tmax, numSteps)
     s_stop = time.time()
 
     # compute exact result
