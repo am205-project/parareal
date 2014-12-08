@@ -58,4 +58,13 @@ target/
 *.out
 *.synctex.gz
 *.log
+*.nav
+*.toc
+*.bbl
+*.blg
+*.snm
+poster/*.pdf
 paper.pdf
+
+# Vim stuff
+*.swp

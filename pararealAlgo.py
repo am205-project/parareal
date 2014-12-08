@@ -38,6 +38,8 @@ def startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
 
         # update unext for next iteration
         upast = copy.copy(unext)
+  else:
+      return upast
 
   return unext
 
@@ -58,10 +60,10 @@ def serial_coarse_with_correction(deriv, init, corrections, dt, tmin, tmax, numS
   unext[0] = init
 
   # call forward euler per step and store in vector
-  for ind in xrange(numSteps):
+  for ind in xrange(1,numSteps):
     # get a coarse answer
     # TODO is this upast[ind] off by one?
-    unext[ind] = forward_euler_step(deriv, times[ind], unext[ind], dt)
+    unext[ind] = forward_euler_step(deriv, times[ind-1], unext[ind-1], dt)
 
     # update unext with corrections computed with upast
     unext[ind+1] = unext[ind] + fixed_corrections[ind]
@@ -98,7 +100,6 @@ def parallel_corrections(deriv, upast, tmin, tmax, numSteps, qualityFactor, comm
   local_differences = np.empty((0, upast.shape[1]))
   # in a loop, compute fine and then corrections one piece at a time that processor is responsible for, serially
   while (start < end):
-    print("Rank: %d, start: %d" %(rank, start))
     fineResult = forward_euler(deriv, upast[start], times[start], times[start+1], fineNumSteps)
 
     # get difference for the last time step of the fine result and compare to coarse result answer for same time
@@ -139,6 +140,9 @@ if __name__ == '__main__':
   tmin = 0.
   tmax = 1.
   numSteps = 100
+  k = 1
+  qualityFactor = 100
+  fineNumSteps = qualityFactor * numSteps
 
   init = np.array([1.])
   ###
@@ -149,7 +153,8 @@ if __name__ == '__main__':
 
   # Use parareal algorithm
   # we only want column 1 so numpy doesn't complain
-  p_result = startParareal(deriv, init, 2, tmin, tmax, numSteps, comm)
+  p_result = startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
+          qualityFactor = 100)
 
   # Communciation barrier and ending time with MPI timing function
   comm.barrier()
@@ -163,15 +168,16 @@ if __name__ == '__main__':
     s_start = time.time()
 
     # we only want column 1 so numpy doesn't complain
-    s_result = forward_euler(deriv, init, tmin, tmax, numSteps)[:,0]
+    s_result = forward_euler(deriv, init, tmin, tmax, fineNumSteps)[:,0]
     s_stop = time.time()
 
     # compute exact result
-    e_result = np.exp(np.linspace(tmin, tmax, numSteps+1))
+    e_result_p = np.exp(np.linspace(tmin, tmax, numSteps+1))
+    e_result_s = np.exp(np.linspace(tmin, tmax, fineNumSteps+1))
 
     # compute errors
-    s_error = np.abs(s_result - e_result)# / abs(e_result)
-    p_error = np.abs(p_result - e_result)# / abs(e_result)
+    p_error = np.abs(p_result - e_result_p)# / abs(e_result)
+    s_error = np.abs(s_result - e_result_s)# / abs(e_result)
 
     # print timers
     print "Serial Time:   %f secs" % (s_stop - s_start)
