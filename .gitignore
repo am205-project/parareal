@@ -55,7 +55,7 @@ target/
 
 # Latex stuff
 *.aux
-*.out
+./*.out
 *.synctex.gz
 *.log
 *.nav
@@ -64,6 +64,7 @@ target/
 *.blg
 *.snm
 poster/*.pdf
+poster/*.out
 paper.pdf
 
 # Vim stuff
