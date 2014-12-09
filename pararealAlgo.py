@@ -222,18 +222,20 @@ if __name__ == '__main__':
             e_result_p = exact(coarse_times)
             e_result_s = exact(fine_times)
 
-            print("\n\nExample %d:" %iters)
+            print("\n\nExample %d\n" %iters)
             iters += 1
             # print parameters:
             print("Parameters:")
-            print("numSteps:        %d", %numSteps)
-            print("Quality Factor:  %d", %qualityFactor)
-            print("Corrections:     %d", %k)
+            print("numSteps:        %d" %numSteps)
+            print("Quality Factor:  %d" %qualityFactor)
+            print("Corrections:     %d" %k)
+            print("")
             # print results if debug mode on
             if args.debug:
-                print("Serial Result   = " + str(s_result))
+                print("Serial Result   = \n" + str(s_result))
                 print("Parallel Result = \n" + str(p_result))
-                print("Exact           = " + str(e_result))
+                print("Exact           = \n" + str(e_result))
+                print("")
 
             # compute errors
             p_error = np.abs(p_result - e_result_p)# / abs(e_result)
