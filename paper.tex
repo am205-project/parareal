@@ -81,34 +81,11 @@ of time. However, stepsize in time is also proportional to the computation
 required. It would be nice to allow for strong scaling where a problem can be
 solved in a reasonable time for very small time steps.
 
-Another obstacle to trying to paralleliize numerical methods is that the methods
-are inherently serial in time---in that evaluation of the next time $n+1$
-depends on the previous values, say those at time $n-1$ and $n$. This setup
-does not allow for parallelism.
+Another obstacle to trying to paralleliize numerical methods is that the methods are inherently serial in time - in that evaluation of the next time $n+1$ depends on the previous values, say those at time $n-1$ and $n$.  This setup does not allow for parallelism.  The only way to incorporate parallelism is to create schemes that have parallelizable components - such as an update or a refinement to a serial portion.  As will be discussed and analyzed in the metodology section, one such scheme would be the parareal algorithm.  For an overview, the parareal algorithm first does a coarse (low-order and fast) approximation, then seeks to iteratively correct using smaller, more refined numerical methods done in parallel from approximated starting points approximated by the coarse solution.
 
- An alternative paradigm is a parallelism by space, where the result vector is
- divided up to different processors.  In this way, the 
+An alternative paradigm to applying parallelism to numerical methods is the parallelism by space paradigm, where the result vector space is divided up to different regions and sent to different responsible processors.  In this way, each processor sees a similar but smaller-scale problem - weak scaling.  This method is expected to outperform the parallel in time paradigm simply because the task is somewhat embarassingly parallel, being able to be naturally divided into smaller but identical in method problems.  There is no serial component in this algorithm and should be exhibit both strong and weak scaling.
 
-In general, the
-
-Due to the more theoretical nature of the parareal method, we look to describe
-its stability and error numerically.
-
-\subsection{Stability of the Parareal}
-
-FROM THE SLIDES 
-
-TODO BKSIM? ASHI carry?
-
-\subsection{Error of the Parareal}
-
-FROM THE SLIDES? + Adjust?
-TODO BKSIM? ASHI carry?
-
-Show that this parareal method will approach, with large enough $k$ (enough
-iterations) to approach the error of the fine method. However, with too large
-of a k and a lower quality factor (ratio of fine to coarse), the time for the
-parareal could potentially take longer than the direct serial computation.
+In general, the division in space paradigm is more intuitive to parallelize and will often lead to greater speedups because there is no serial component.  Yet it is worth noting that knowing how to divide the result vector requires knowledge of problem-specific details.  Thus, this approach lacks the generalisability and theoretical derivaions that schemes that parallelize in time can offer.
 
 \section{Methodology}
 
@@ -134,12 +111,26 @@ serial coarse method updated by a finer method run in parallel for subsections.
  \label{alg:parareal}
 \end{algorithm}
 
-\subsection{Visualization Diagram}
+\subsection{Visualization of Scheme}
+
 bksim TODO
+
+\subsection{Stability of the Parareal}
+
+FROM THE SLIDES 
+
+TODO BKSIM? ASHI carry?
+
+\subsection{Error of the Parareal}
+
+FROM THE SLIDES? + Adjust?
+TODO BKSIM? ASHI carry?
+
+Show that this parareal method will approach, with large enough k (enough iterations) to approach the error of the fine method.  However, with too large of a k and a lower quality factor (ratio of fine to coarse), the time for the parareal could potentially take longer than the direct serial computation.
 
 \subsection{Analysis of Speedup and Efficiency}
 
-ashi TODO from our computation on the paper
+ashi TODO ashia from wesley's handwritten analysis
 
 \subsection{Explored Tests}
 
@@ -147,32 +138,39 @@ We wished to explore certain tests that would span the space of possible
 parameters to the parareal as well as possible applications in different ODE
 systems. Our baseline was looking to compare 
 
-\section{Results}
-
-TODO CONSIDER IF WE WANT TO MOVE SOME OF THE ANALYSIS TO THE DISCUSSION SECTION AND FRAME THE DISCUSSION WITH THE SAME SUBSECTIONS
+\section{Results and Discussion}
 
 \subsection{Comparison to Serial with $g_{fine}$ as a Forward Euler with
 Smaller $\Delta t$}
 
-\subsection{Comparison to Serial with $g_{fine}$ as Higher Order Methods}
+We looked at both $e^x$ as well as TODO WHAT OTHER SCHEME using GET PARAMETERES
 
-We looked 
+Varying Iterations:
 
-We see that the speedups are
+Varying Quality Factor:
+We define the quality factor in this case for how many times smaller the Euler method used for $g_{fine}$ is compared to the Euler method used for $g_{\Delta t}$
 
-Note that increasing the iterations
+Changing the ODE
 
 ashi TODO add figures and check my logic/bs to match it to the data
 
 \subsection{Comparison to Serial with $g_{fine}$ as Higher Order Methods}
 
-TODO team?
+TODO team
 
-\subsection{Comparison to a Forward Euler Parallelized by Space}
+IDEALLY WE SHOW THE SAME GRAPHS AS THE ABOVE WITH ALL THE VARIATIONS TESTED
+
+\subsection{Parallelism by Space Paradigm}
 
 For the speaker problem, we designed a problem-specific method to parallelize in space and divide Pierce Hall into subsections such that each processor would receive a division of the building to compute.
 
 bksim TODO
+
+\subsection{Parallelism Paradigm Comparisons}
+
+TODO compare the computation times (and perhaps a slight change in accuracy of the results) between both parareal methods the best in the sections before hand
+
+TODO bsim and ashi show graphs and some times for the forward euler parareal versions - the fastest ones or both if we have obht implemented
 
 \subsection{Comparison to C++ Implementations}
 
@@ -182,21 +180,18 @@ cu
 
 \subsection{Summary of Performance}
 
-TODO
+TODO team
 
 \subsection{Strong and Weak Scaling Analysis}
 
 ashi TODO by taking some numbers and following
 \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
 
-\section{Discussion}
-
 \subsection{Demonstrating Scaling}
 
 As we can see, we do see the effects of strong scaling
 
 TODO analyze
-
 
 \subsection{Possible Optimizations}
 
