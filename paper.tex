@@ -1,24 +1,24 @@
-%        File: paper.tex
-%     Created: Sat Dec 06 04:00 PM 2014 E
+%ssssFile: paper.tex
+%ss Created: Sat Dec 06 04:00 PM 2014 E
 %
-\documentclass[letterpaper,twocolumn,11pt]{article}
+\documentclass[letterpaper,12pt]{article}
 % Change the header if you're going to change this.
  
 % Possible packages - uncomment to use
-\usepackage{amsmath}       % Needed for math stuff
-%\usepackage{lastpage}      % Finds last page
-\usepackage{amssymb}       % Needed for some math symbols
-\usepackage{graphicx}      % Needed for graphics
+\usepackage{amsmath} % Needed for math stuff
+%\usepackage{lastpage}sss% Finds last page
+\usepackage{amssymb} % Needed for some math symbols
+\usepackage{graphicx}% Needed for graphics
 \usepackage[usenames,dvipsnames]{xcolor} % Needed for graphics and color
-%\usepackage{setspace}      % Needed to set single/double spacing
-\usepackage{float}         % Better placement of figures & tables
-\usepackage{hyperref}           % Can have actual links
+%\usepackage{setspace}sss% Needed to set single/double spacing
+\usepackage{float} % Better placement of figures & tables
+\usepackage{hyperref} % Can have actual links
 \usepackage{mathpazo}
 \usepackage[linesnumbered,vlined,ruled]{algorithm2e} % algorithm
 
 %Suggested by TeXworks
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
-\usepackage{verbatim}      % lets you do verbatim text
+\usepackage{verbatim} % lets you do verbatim text
  
 % Sets the page margins to 1 inch each side
 \usepackage[margin=1in]{geometry}
@@ -53,53 +53,82 @@ Harvard University, Applied Math 205 Final Project}
 \setlength\parskip{2ex}
 
 % Put your stuff here
-\twocolumn[
-    \begin{@twocolumnfalse}
-    \maketitle
-    \begin{abstract}
-    We implement the parareal algorithm to solve various ODEs and compare in
-    terms of accuracy, speedup and efficiency. We explore the effect of using
-    differnt solution operators (a coarse and a fine as required by the method).
-    Our code is written in python using mpi4py to parallelize. We observe
-    slight speedups in our small scale tests up to 64 processors on Harvard's
-    Odyssey cluster. We analyze possible reasons as to why our implementation
-    may not be ideal and some tradeoffs that are taken in the parareal
-    implementation. Further optimizations are proposed and rationalized as next
-    steps including ports of to C++ and BLAS libraries which is a more
-    performance-oriented, lower-level language than Python. Data is shown for
-    solving for variuos complexities of ODEs from the basic exponential to
-    modelling sound wave propagation as we did in Homework 4.
-    \end{abstract}
-    \end{@twocolumnfalse}
-]
+%\twocolumn[
+%\begin{@twocolumnfalse}
+\maketitle
+\begin{abstract}
+We implement the parareal algorithm to solve various ODEs and compare in
+terms of accuracy, speedup and efficiency. We explore the effect of using
+different solution operators (a coarse and a fine as required by the method).
+Our code is written in python using mpi4py to parallelize. We observe
+light speedups in our small scale tests up to 64 processors on Harvard's
+Odyssey cluster. We analyze possible reasons as to why our implementation
+may not be ideal and some tradeoffs that are taken in the parareal
+implementation. Further optimizations are proposed and rationalized as next
+steps including ports of to C++ and BLAS libraries which is a more
+performance-oriented, lower-level language than Python. Data is shown for
+solving for various complexities of ODEs from the basic exponential to
+modeling sound wave propagation as we did in Homework 4.
+\end{abstract}
+%\end{@twocolumnfalse}
+%]
+
+\clearpage
+
+\tableofcontents
+
+\clearpage
+
 \section{Background}
 
-\subsection{Numerical Methods and \\ Parallelization}
+\subsection{Numerical Methods and Parallelization}
 Solving systems of differential equations can be a computationally expensive
 task. The error of most algorithms scales on the stepsize of the discretization
 of time. However, stepsize in time is also proportional to the computation
 required. It would be nice to allow for strong scaling where a problem can be
 solved in a reasonable time for very small time steps.
 
-Another obstacle to trying to paralleliize numerical methods is that the methods are inherently serial in time - in that evaluation of the next time $n+1$ depends on the previous values, say those at time $n-1$ and $n$.  This setup does not allow for parallelism.  The only way to incorporate parallelism is to create schemes that have parallelizable components - such as an update or a refinement to a serial portion.  As will be discussed and analyzed in the metodology section, one such scheme would be the parareal algorithm.  For an overview, the parareal algorithm first does a coarse (low-order and fast) approximation, then seeks to iteratively correct using smaller, more refined numerical methods done in parallel from approximated starting points approximated by the coarse solution.
+Another obstacle to trying to paralleliize numerical methods is that the methods
+are inherently serial in time---in that evaluation of the next time $n+1$
+depends on the previous values, say those at time $n-1$ and $n$. This setup
+does not allow for parallelism. The only way to incorporate parallelism is to
+create schemes that have parallelizable components---such as an update or a
+refinement to a serial portion. As will be discussed and analyzed in the
+metodology section, one such scheme would be the parareal algorithm.sFor an
+overview, the parareal algorithm first does a coarse (low-order and fast)
+approximation, then seeks to iteratively correct using smaller, more refined
+numerical methods done in parallel from approximated starting points
+approximated by the coarse solution.
 
-An alternative paradigm to applying parallelism to numerical methods is the parallelism by space paradigm, where the result vector space is divided up to different regions and sent to different responsible processors.  In this way, each processor sees a similar but smaller-scale problem - weak scaling.  This method is expected to outperform the parallel in time paradigm simply because the task is somewhat embarassingly parallel, being able to be naturally divided into smaller but identical in method problems.  There is no serial component in this algorithm and should be exhibit both strong and weak scaling.
+An alternative paradigm to applying parallelism to numerical methods is the
+parallelism by space paradigm, where the result vector space is divided up to
+different regions and sent to different responsible processors. In this way,
+each processor sees a similar but smaller-scale problem---weak scaling. This
+method is expected to outperform the parallel in time paradigm simply because
+the task is somewhat embarassingly parallel, being able to be naturally divided
+into smaller but identical in method problems. There is no serial component in
+this algorithm and should be exhibit both strong and weak scaling.
 
-In general, the division in space paradigm is more intuitive to parallelize and will often lead to greater speedups because there is no serial component.  Yet it is worth noting that knowing how to divide the result vector requires knowledge of problem-specific details.  Thus, this approach lacks the generalizability and theoretical derivaions that schemes that parallelize in time can offer.
+In general, the division in space paradigm is more intuitive to parallelize and
+will often lead to greater speedups because there is no serial component. Yet
+it is worth noting that knowing how to divide the result vector requires
+knowledge of problem-specific details. Thus, this approach lacks the
+general stability and theoretical derivations that schemes that parallelize in
+time can offer.
 
 \section{Methodology}
 
 The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is
-a general algorithm that allows parallelization in time.  It does so by using a
+a general algorithm that allows parallelization in time.sIt does so by using a
 cheaper (lower order, lesser resolution) approximation first, and then makes
 corrections in parallel. The entire process is then iterative and tuned for a
 given amount of iterations. Therefore, the algorithm is $k$ repetitions of a
 serial coarse method updated by a finer method run in parallel for subsections.
 
 \begin{algorithm}[t]
-    \KwIn{Temporal discretization $t^n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
+    \KwIn{Temporal discretization $t_n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
     \KwIn{Coarse scheme $g_{\Delta t}$}
-    \KwIn{Finer	 scheme $g_{\textnormal{fine}}$}
+    \KwIn{Finersscheme $g_{\textnormal{fine}}$}
     Compute $u^1_{n+1} = g_{\Delta t}(t_n, u^1_n)$\;
     Compute the corrections $\delta g_n(u^1_n) = g_{\textnormal{fine}}(t_n,
     u^1_n) - g_{\Delta t}(t_n, u^1_n)$ in parallel\;
@@ -128,7 +157,10 @@ TODO BKSIM? ASHI carry?
 FROM THE SLIDES? + Adjust?
 TODO BKSIM? ASHI carry?
 
-Show that this parareal method will approach, with large enough k (enough iterations) to approach the error of the fine method.  However, with too large of a k and a lower quality factor (ratio of fine to coarse), the time for the parareal could potentially take longer than the direct serial computation.
+Show that this parareal method will approach, with large enough $k$ (enough
+iterations) to approach the error of the fine method. However, with too large of
+a $k$ and a lower quality factor (ratio of fine to coarse), the time for the
+parareal could potentially take longer than the direct serial computation.
 
 \subsection{Analysis of Speedup and Efficiency}
 
@@ -170,17 +202,17 @@ bksim TODO GET DATA, AS REQUIRED FROM ABOVE, SHOW GRAPHS
 
 \subsection{Parallelism Paradigm Comparisons}
 
-Now with 3 different parallel implementations, two in time wiht the parareal, one in space,  we compare across take a breather, don't overwork, 
+Now with 3 different parallel implementations, two in time wiht the parareal, one in space,  we compare across TODO WESLSEY
 
 TODO compare the computation times (and perhaps a slight change in accuracy of the results) between both parareal methods the best in the sections before hand
 
-TODO bsim and ashi show graphs and some times for the forward euler parareal versions - the fastest ones or both if we have obht implemented
+TODO bsim and ashi show graphs and some times for the forward Euler parareal
+versions---the fastest ones or both if we have both implemented
 
 \subsection{Comparison to C++ Implementations}
 
 The numpy environment combined with the required structure of MPI required
-certain type/data structure conversions which will take time.not not cunot
-cu
+certain type/data structure conversions which will take time.not not cunot cu
 
 \subsection{Summary of Performance}
 
@@ -212,12 +244,12 @@ further explore the parareal algorithm would involve many test cases and to see
 how the parareal algorithm compares to other approaches---since the actual time
 and iterations necessary depend on the system of ODEs to solve.
 
-On the other hand, paralleism by space already requires a very problem-specific
+On the other hand, parallelism by space already requires a very problem-specific
 design. The strong scaling efficiency of parallelism by space is high and is
-conceptually embarrisingly parallel and easier to create. However, the
+conceptually embarrassingly parallel and easier to create. However, the
 limitations are in the requirement for the code to be designed for the
 problem---how to divide by space so as to allow for the maximum number of even
-divisions. The lack of generalism is not as beautiful as the parareal algorithm
+divisions. The lack of generality is not as beautiful as the parareal algorithm
 but may lend itself to faster speedups.
 
 All in all, we have implemented and begun to explore some techniques of looking

@@ -56,8 +56,11 @@
 %-----------------------------------------------------------
 
 \usepackage{graphicx}  % Required for including images
+\usepackage{hyperref}
+\usepackage{natbib}
 
 \usepackage{booktabs} % Top and bottom rules for tables
+\usepackage{microtype}
 \usepackage[linesnumbered,vlined,ruled]{algorithm2e} % algorithm
 
 %----------------------------------------------------------------------------------------
@@ -94,12 +97,18 @@
 
 \begin{alertblock}{Abstract}
 
-We implement the parareal algorithm to solve various ODEs and compare in terms
-of accuracy, speedup and efficiency. We explore the effect of using differnt
-solution operators (a coarse and a fine as required by the method) The majority
-of our code is written in python using mpi4py to parallelize.  To compare to
-more performance-based languages, we compare certain codes to an implementation
-in C++.
+We implement the Parareal algorithm to solve various ODEs and compare in
+terms of accuracy, speedup and efficiency. We explore the effect of using
+different solution operators (a coarse and a fine as required by the method).
+Our code is written in python using mpi4py to parallelize. We observe
+light speedups in our small scale tests up to 64 processors on Harvard's
+Odyssey cluster. We analyze possible reasons as to why our implementation
+may not be ideal and some tradeoffs that are taken in the Parareal
+implementation. Further optimizations are proposed and rationalized as next
+steps including ports of to C++ and BLAS libraries which is a more
+performance-oriented, lower-level language than Python. Data is shown for
+solving for various complexities of ODEs from the basic exponential to
+modeling sound wave propagation as we did in homework 4.
 
 \end{alertblock}
 
@@ -107,41 +116,16 @@ in C++.
 %	INTRODUCTION
 %----------------------------------------------------------------------------------------
 
-\begin{block}{Introduction}
-
-Solving systems of differential equations can be a computationally expensive
-task. The error of most algorithms scales on the stepsize of the discretization
-of time. However, stepsize in time is also proportional to the computation
-required. The parareal algorithm, developed by YADA YADA. An alternative would
-be to parallelize by space.
-
-%------------------------------------------------
-
-\begin{figure}
-\includegraphics[width=0.8\linewidth]{harvard_univ_logo.png}
-\caption{Figure caption}
-\end{figure}
-
-\end{block}
-
-%----------------------------------------------------------------------------------------
-
-\end{column} % End of the first column
-
-\begin{column}{\sepwid}\end{column} % Empty spacer column
-
-\begin{column}{\twocolwid} % Begin a column which is two columns wide (column 2)
-
-\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column
-
-\begin{column}{\onecolwid}\vspace{-.6in} % The first column within column 2 (column 2.1)
-
-%----------------------------------------------------------------------------------------
-%	MATERIALS
-%----------------------------------------------------------------------------------------
-
 \begin{block}{Algorithm}
-The general parareal method, as described by YADA YADA can be SEEN BELOW YAR
+
+The Parareal algorithm, developed by Lions, Maday and Turinici in 2001, is
+a general algorithm that allows parallelization in time.sIt does so by using a
+cheaper (lower order, lesser resolution) approximation first, and then makes
+corrections in parallel. The entire process is then iterative and tuned for a
+given amount of iterations. Therefore, the algorithm is $k$ repetitions of a
+serial coarse method updated by a finer method run in parallel for subsections.
+
+Subscript: time index. Superscript: iteration index.
 
 \begin{itemize}
     \item \textbf{Input}: Temporal discretization $t_n = t_0 + n \Delta t, \, n =
@@ -164,25 +148,33 @@ The general parareal method, as described by YADA YADA can be SEEN BELOW YAR
 
 %----------------------------------------------------------------------------------------
 
-\end{column} % End of column 2.1
+\end{column} % End of the first column
 
-\begin{column}{\onecolwid}\vspace{-.6in} % The second column within column 2 (column 2.2)
+\begin{column}{\sepwid}\end{column} % Empty spacer column
 
-%----------------------------------------------------------------------------------------
-%	METHODS
-%----------------------------------------------------------------------------------------
+\begin{column}{\onecolwid} % Begin a column which is two columns wide (column 2)
 
-\begin{block}{Methods}
+%\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column
 
-Lorem ipsum dolor \textbf{sit amet}, consectetur adipiscing elit. Sed laoreet accumsan mattis. Integer sapien tellus, auctor ac blandit eget, sollicitudin vitae lorem. Praesent dictum tempor pulvinar. Suspendisse potenti. Sed tincidunt varius ipsum, et porta nulla suscipit et. Etiam congue bibendum felis, ac dictum augue cursus a. \textbf{Donec} magna eros, iaculis sit amet placerat quis, laoreet id est. In ut orci purus, interdum ornare nibh. Pellentesque pulvinar, nibh ac malesuada accumsan, urna nunc convallis tortor, ac vehicula nulla tellus eget nulla. Nullam lectus tortor, \textit{consequat tempor hendrerit} quis, vestibulum in diam. Maecenas sed diam augue.
-
-\end{block}
+%\begin{column}{\onecolwid}\vspace{-.6in} % The first column within column 2 (column 2.1)
 
 %----------------------------------------------------------------------------------------
+%	MATERIALS
+%----------------------------------------------------------------------------------------
 
-\end{column} % End of column 2.2
 
-\end{columns} % End of the split of column 2 - any content after this will now take up 2 columns width
+%----------------------------------------------------------------------------------------
+
+%\end{column} % End of column 2.1
+
+%\begin{column}{\onecolwid}\vspace{-.6in} % The second column within column 2 (column 2.2)
+
+
+%----------------------------------------------------------------------------------------
+
+%\end{column} % End of column 2.2
+
+%\end{columns} % End of the split of column 2 - any content after this will now take up 2 columns width
 
 %----------------------------------------------------------------------------------------
 %	IMPORTANT RESULT
@@ -196,70 +188,110 @@ Lorem ipsum dolor \textbf{sit amet}, consectetur adipiscing elit. Sed laoreet ac
 
 %----------------------------------------------------------------------------------------
 
-\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column again
+%\begin{columns}[t,totalwidth=\twocolwid] % Split up the two columns wide column again
 
-\begin{column}{\onecolwid} % The first column within column 2 (column 2.1)
+%\begin{column}{\onecolwid} % The first column within column 2 (column 2.1)
 
 %----------------------------------------------------------------------------------------
 %	MATHEMATICAL SECTION
 %----------------------------------------------------------------------------------------
 
-%\begin{block}{Mathematical Section}
+\begin{block}{Theoretical Results}
 
-%Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin. Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin.
-  
-%\begin{equation}
-%E = mc^{2}
-%\label{eqn:Einstein}
-%\end{equation}
-%
-%Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin. Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin.
-%
-%\begin{equation}
-%\cos^3 \theta =\frac{1}{4}\cos\theta+\frac{3}{4}\cos 3\theta
-%\label{eq:refname}
-%\end{equation}
-%
-%Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin. Nam quis odio enim, in molestie libero. Vivamus cursus mi at nulla elementum sollicitudin.
-%
-%\begin{equation}
-%\kappa =\frac{\xi}{E_{\mathrm{max}}} %\mathbb{ZNR}
-%\end{equation}
-%
-%\end{block}
+\textbf{Convergence}
+
+Assume the coarse operator $g_{\Delta t}$ is order $m$ and is Lipshitz, and the
+fine solution operator $g_{\textnormal{fine}}$ is a sufficiently accurate
+approximation to the analytic operator so we may replace $g_{\textnormal{fine}}
+\to g$. 
+
+\emph{Theorem}: The order of accuracy of the Parareal method with coarse
+solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. Can be proved by
+induction. 
+
+\textbf{Stability}
+
+With the Parareal method, it is possible to combine ODE solvers. Stability
+region depends on both $g_{\Delta t}$ and $g_{\textnormal{fine}}$, and the
+equation being solved. 
+
+\textbf{Runtime and Speedup}
+
+Let's say the coarse operator runs in time $t$, and the fine operator runs in
+time $Q \cdot t$. Assume we have $N$ processors and we perform $k$ correction
+steps. Then, the runtime of Parareal is, assuming negligible setup and
+aggregation time,
+
+\begin{equation}
+t + k(t + \frac{Qt}{N}).
+\end{equation}
+
+In order for there to be a speedup relative to the fine operator, we require
+that $t + k(t + Qt/N) < Qt$, or $k < \frac{Q - 1}{1 + Q/N}$ or $N > \frac{Qk}{Q
+- 1 - k}$. 
+
+\end{block}
+
+\begin{block}{Methods}
+
+We implemented the Parareal algorithm in Python, using mpi4py to parallelize it.
+Our coarse operator was forward Euler step, with 100 steps, while the fine
+operator was forward Euler, with $Q * 100$ steps, where $Q$ is the quality
+factor. We tested the Parareal algorithm on two sets of differential equations:
+
+\[
+y'(t) = f(t, y) = \lambda y, \, y(0) = 1
+\]
+\[
+y''(t) + 2y'(t) + 5y(t) = 0, \, y(0) = 1 \, y'(0) = 0.
+\]
+
+We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
+
+\end{block}
+
 
 %----------------------------------------------------------------------------------------
 
 \end{column} % End of column 2.1
 
+\begin{column}{\sepwid}\end{column}
+
 \begin{column}{\onecolwid} % The second column within column 2 (column 2.2)
+
+%----------------------------------------------------------------------------------------
+%	METHODS
+%----------------------------------------------------------------------------------------
 
 %----------------------------------------------------------------------------------------
 %	RESULTS
 %----------------------------------------------------------------------------------------
 
-\begin{block}{Results}
+\begin{block}{Preliminary Results}
 
 \begin{figure}
-\includegraphics[width=0.8\linewidth]{harvard_univ_logo.png}
-\caption{Figure caption}
+\includegraphics[width=0.75\textwidth]{../data/runtime_vs_cpus.pdf}
+\caption{Running time vs. number of CPUs.}
+\label{fig:run_v_cpu}
 \end{figure}
 
-Nunc tempus venenatis facilisis. Curabitur suscipit consequat eros non porttitor. Sed a massa dolor, id ornare enim:
+\begin{figure}
+\includegraphics[width=0.75\linewidth]{../data/error_vs_corrections.pdf}
+\caption{Error vs. number of correction steps.}
+\label{fig:err_v_k}
+\end{figure}
 
-\begin{table}
-\vspace{2ex}
-\begin{tabular}{l l l}
-\toprule
-\textbf{Treatments} & \textbf{Response 1} & \textbf{Response 2}\\
-\midrule
-Treatment 1 & 0.0003262 & 0.562 \\
-Treatment 2 & 0.0015681 & 0.910 \\
-Treatment 3 & 0.0009271 & 0.296 \\
-\bottomrule
-\end{tabular}
-\caption{Table caption}
-\end{table}
+\begin{figure}
+\includegraphics[width=0.75\linewidth]{../data/error_vs_qualityfactor.pdf}
+\caption{Error vs. quality factor of the fine operator}
+\label{fig:err_v_q}
+\end{figure}
+
+\begin{figure}
+\includegraphics[width=0.75\linewidth]{../data/runtime_vs_corrections.pdf}
+\caption{Running time as a function of the number of correction steps.}
+\label{fig:run_v_k}
+\end{figure}
 
 \end{block}
 
@@ -267,9 +299,9 @@ Treatment 3 & 0.0009271 & 0.296 \\
 
 \end{column} % End of column 2.2
 
-\end{columns} % End of the split of column 2
+%\end{columns} % End of the split of column 2
 
-\end{column} % End of the second column
+%\end{column} % End of the second column
 
 \begin{column}{\sepwid}\end{column} % Empty spacer column
 
@@ -281,8 +313,6 @@ Treatment 3 & 0.0009271 & 0.296 \\
 
 \begin{block}{Conclusion}
 
-Nunc tempus venenatis facilisis. \textbf{Curabitur suscipit} consequat eros non porttitor. Sed a massa dolor, id ornare enim. Fusce quis massa dictum tortor \textbf{tincidunt mattis}. Donec quam est, lobortis quis pretium at, laoreet scelerisque lacus. Nam quis odio enim, in molestie libero. Vivamus cursus mi at \textit{nulla elementum sollicitudin}.
-
 \end{block}
 
 %----------------------------------------------------------------------------------------
@@ -291,12 +321,6 @@ Nunc tempus venenatis facilisis. \textbf{Curabitur suscipit} consequat eros non 
 
 \begin{block}{Additional Information}
 
-Maecenas ultricies feugiat velit non mattis. Fusce tempus arcu id ligula varius dictum. 
-\begin{itemize}
-\item Curabitur pellentesque dignissim
-\item Eu facilisis est tempus quis
-\item Duis porta consequat lorem
-\end{itemize}
 
 \end{block}
 
@@ -342,10 +366,7 @@ Maecenas ultricies feugiat velit non mattis. Fusce tempus arcu id ligula varius 
 \end{alertblock}
 
 \begin{center}
-\begin{tabular}{ccc}
-%\includegraphics[width=0.4\linewidth]{harvard_univ_logo.png} & \hfill &
 \includegraphics[width=0.2\linewidth]{seas-rgb.png}
-\end{tabular}
 \end{center}
 
 %----------------------------------------------------------------------------------------
