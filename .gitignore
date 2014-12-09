@@ -68,3 +68,6 @@ paper.pdf
 
 # Vim stuff
 *.swp
+
+# Tags
+tags
