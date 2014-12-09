@@ -224,6 +224,11 @@ if __name__ == '__main__':
 
             print("\n\nExample %d:" %iters)
             iters += 1
+            # print parameters:
+            print("Parameters:")
+            print("numSteps:        %d", %numSteps)
+            print("Quality Factor:  %d", %qualityFactor)
+            print("Corrections:     %d", %k)
             # print results if debug mode on
             if args.debug:
                 print("Serial Result   = " + str(s_result))
