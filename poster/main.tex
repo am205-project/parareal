@@ -114,7 +114,7 @@ steps including ports of to C++ using BLAS. Our code is written in python using 
 \begin{block}{Algorithm}
 
 The Parareal algorithm, developed by Lions, Maday and Turinici in 2001, is
-a general algorithm that allows parallelization in time.sIt does so by using a
+a general algorithm that allows parallelization in time. It does so by using a
 cheaper (lower order or lesser resolution) approximation first, and then makes
 corrections in parallel. The entire process is then iterative and tuned for a
 given amount of iterations. Therefore, the algorithm is $k$ repetitions of a
@@ -213,7 +213,7 @@ aggregation time,
 t + k(t + \frac{Qt}{N}).
 \end{equation}
 
-The first t seconds comes from the first coarse aprpoximation, without which the parareal algorithm degenerates to $g_{\Delta t}$,  In order for there to be a speedup relative to the fine operator, we require
+The first t seconds comes from the first coarse approximation, without which the parareal algorithm degenerates to $g_{\Delta t}$,  In order for there to be a speedup relative to the fine operator, we require
 that $t + k(t + Qt/N) < Qt$, or $k < \frac{Q - 1}{1 + Q/N}$ or $N > \frac{Qk}{Q
 - 1 - k}$. This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, k, is important for error convergence to that of $g_{fine}$.  However, this optimal k is a problem-specific parameter and must be optimized for.
 
@@ -333,7 +333,7 @@ requires deeper analysis for the specific problem.
 \begin{itemize}
 \item Lions, J., Maday, Y and Turinici, G. "A 'Parareal' in Time Discretizion of PDE's". 2001. \textit{Comptes Rendus de l'Academie des Sciences Series I Mathematics} 332(7): 661-668\\
 
-\item Field, Scott. "Parareal Methods Field Talk". Dec, 2009. Retried from \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
+\item Field, Scott. "Parareal Methods Field Talk". Dec, 2009. Retrieved from \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
 
 \end{itemize}
 
