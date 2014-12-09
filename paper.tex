@@ -85,7 +85,7 @@ Another obstacle to trying to paralleliize numerical methods is that the methods
 
 An alternative paradigm to applying parallelism to numerical methods is the parallelism by space paradigm, where the result vector space is divided up to different regions and sent to different responsible processors.  In this way, each processor sees a similar but smaller-scale problem - weak scaling.  This method is expected to outperform the parallel in time paradigm simply because the task is somewhat embarassingly parallel, being able to be naturally divided into smaller but identical in method problems.  There is no serial component in this algorithm and should be exhibit both strong and weak scaling.
 
-In general, the division in space paradigm is more intuitive to parallelize and will often lead to greater speedups because there is no serial component.  Yet it is worth noting that knowing how to divide the result vector requires knowledge of problem-specific details.  Thus, this approach lacks the generalisability and theoretical derivaions that schemes that parallelize in time can offer.
+In general, the division in space paradigm is more intuitive to parallelize and will often lead to greater speedups because there is no serial component.  Yet it is worth noting that knowing how to divide the result vector requires knowledge of problem-specific details.  Thus, this approach lacks the generalizability and theoretical derivaions that schemes that parallelize in time can offer.
 
 \section{Methodology}
 
@@ -111,9 +111,11 @@ serial coarse method updated by a finer method run in parallel for subsections.
  \label{alg:parareal}
 \end{algorithm}
 
+The beauty is the parareal method can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{fine}$ solution operators.  The $g_{fine}$ solution is to a more computationally expensive method but assumed to provide either greater resolution or lower error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code.
+
 \subsection{Visualization of Scheme}
 
-bksim TODO
+bksim TODO put a graph because maybe it'll help? the slides have a version
 
 \subsection{Stability of the Parareal}
 
@@ -136,14 +138,14 @@ ashi TODO ashia from wesley's handwritten analysis
 
 We wished to explore certain tests that would span the space of possible
 parameters to the parareal as well as possible applications in different ODE
-systems. Our baseline was looking to compare 
+systems. Because there were so many different versions and parameteres for the parareal to test,
 
 \section{Results and Discussion}
 
 \subsection{Comparison to Serial with $g_{fine}$ as a Forward Euler with
 Smaller $\Delta t$}
 
-We looked at both $e^x$ as well as TODO WHAT OTHER SCHEME using GET PARAMETERES
+We looked at both $e^x$ as well as TODO WHAT OTHER SCHEME using WHAT WERE THE PARAMETERS - Coarse and Fine Num Steps
 
 Varying Iterations:
 
@@ -162,11 +164,13 @@ IDEALLY WE SHOW THE SAME GRAPHS AS THE ABOVE WITH ALL THE VARIATIONS TESTED
 
 \subsection{Parallelism by Space Paradigm}
 
-For the speaker problem, we designed a problem-specific method to parallelize in space and divide Pierce Hall into subsections such that each processor would receive a division of the building to compute.
+For the speaker problem, we designed a problem-specific method to parallelize in space and divide Pierce Hall into subsections such that each processor would receive a division of the building to compute. We wish to strong scaling, in which the computation time of our parallel method will decrease as we increase the number of processors. We compare this version to the serial version we did for Homework 4.
 
-bksim TODO
+bksim TODO GET DATA, AS REQUIRED FROM ABOVE, SHOW GRAPHS
 
 \subsection{Parallelism Paradigm Comparisons}
+
+Now with 3 different parallel implementations, two in time wiht the parareal, one in space,  we compare across take a breather, don't overwork, 
 
 TODO compare the computation times (and perhaps a slight change in accuracy of the results) between both parareal methods the best in the sections before hand
 
@@ -195,7 +199,7 @@ TODO analyze
 
 \subsection{Possible Optimizations}
 
-TODO Wesley
+TODO WESLEY
 
 \section{Conclusion and Future Work}
 
