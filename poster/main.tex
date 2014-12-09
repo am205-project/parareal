@@ -143,16 +143,22 @@ be to parallelize by space.
 \begin{block}{Algorithm}
 The general parareal method, as described by YADA YADA can be SEEN BELOW YAR
 
-Input: Temporal discretization $t^n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$
-Input: Coarse scheme $g_{\Delta t}$
-Input: Finer scheme $g_{\textnormal{fine}}$
-Compute $u_1^{n+1} = g_{\Delta t}(t^n, u^n)$
-Compute the corrections $\delta g^n(u_1^n) = g_{\textnormal{fine}}(t^n,
-u^n) - g_{\Delta t}(t^n, u^n)$ in parallel
-Add the prediction and correction terms as $u_2^{n+1} = g_{\Delta
-t}(t^n, u_2^n) + \delta g^n(u_1^n)$
-Repeat steps 2 and 3, incrementing the iteration label and using $u_{k+1}^0
-= u^0$ as the initial condition
+\begin{itemize}
+    \item \textbf{Input}: Temporal discretization $t_n = t_0 + n \Delta t, \, n =
+        1,2,\ldots,N$
+    \item \textbf{Input}: Coarse scheme $g_{\Delta t}$
+    \item \textbf{Input}: Finer scheme $g_{\textnormal{fine}}$
+\end{itemize}
+
+\begin{enumerate}
+    \item Compute $u^1_{n+1} = g_{\Delta t}(t_n, u^1_n)$
+    \item Compute the corrections $\delta g_n(u^1_n) =
+        g_{\textnormal{fine}}(t_n, u^1_n) - g_{\Delta t}(t_n, u^1_n)$ in parallel
+    \item Add the prediction and correction terms as $u^2_{n+1} = g_{\Delta
+        t}(t_n, u^2_n) + \delta g_n(u^1_n)$
+    \item Repeat steps 2 and 3, incrementing the iteration label and using
+        $u^{k+1}_0 = u^1_0$ as the initial condition
+\end{enumerate}
 \end{block}
 
 
