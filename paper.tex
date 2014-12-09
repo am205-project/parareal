@@ -1,7 +1,7 @@
 %        File: paper.tex
 %     Created: Sat Dec 06 04:00 PM 2014 E
 %
-\documentclass[letterpaper,twocolumn,11pt]{article}
+\documentclass[letterpaper,11pt]{article}
 % Change the header if you're going to change this.
  
 % Possible packages - uncomment to use
@@ -53,8 +53,8 @@ Harvard University, Applied Math 205 Final Project}
 \setlength\parskip{2ex}
 
 % Put your stuff here
-\twocolumn[
-    \begin{@twocolumnfalse}
+%\twocolumn[
+    %\begin{@twocolumnfalse}
     \maketitle
     \begin{abstract}
     We implement the parareal algorithm to solve various ODEs and compare in
@@ -70,11 +70,11 @@ Harvard University, Applied Math 205 Final Project}
     solving for variuos complexities of ODEs from the basic exponential to
     modelling sound wave propagation as we did in Homework 4.
     \end{abstract}
-    \end{@twocolumnfalse}
-]
+    %\end{@twocolumnfalse}
+%]
 \section{Background}
 
-\subsection{Numerical Methods and \\ Parallelization}
+\subsection{Numerical Methods and Parallelization}
 Solving systems of differential equations can be a computationally expensive
 task. The error of most algorithms scales on the stepsize of the discretization
 of time. However, stepsize in time is also proportional to the computation
@@ -120,7 +120,7 @@ given amount of iterations. Therefore, the algorithm is $k$ repetitions of a
 serial coarse method updated by a finer method run in parallel for subsections.
 
 \begin{algorithm}[t]
-    \KwIn{Temporal discretization $t^n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
+    \KwIn{Temporal discretization $t_n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
     \KwIn{Coarse scheme $g_{\Delta t}$}
     \KwIn{Finer	 scheme $g_{\textnormal{fine}}$}
     Compute $u^1_{n+1} = g_{\Delta t}(t_n, u^1_n)$\;
