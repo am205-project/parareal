@@ -57,36 +57,44 @@ Harvard University, Applied Math 205 Final Project}
     \begin{@twocolumnfalse}
     \maketitle
     \begin{abstract}
-    We implement the parareal algorithm to solve various ODEs and compare in
-    terms of accuracy, speedup and efficiency. We explore the effect of using
-    differnt solution operators (a coarse and a fine as required by the method)
-    The majority of our code is written in python using mpi4py to parallelize.
-    To compare to more performance-based languages, we compare certain codes to
-    an implementation in C++.
+    We implement the parareal algorithm to solve various ODEs and compare in terms of accuracy, speedup and efficiency. We explore the effect of using differnt solution operators (a coarse and a fine as required by the method).  Our code is written in python using mpi4py to parallelize.  We observe slight speedups in our small scale tests up to 64 processors on Harvard's Odyssey cluster.  We analyze possible reasons as to why our implementation may not be ideal and some tradeoffs that are taken in the parareal implementation.  Further optimizations are proposed and rationalized as next steps including ports of to C++ and BLAS libraries which is a more performance-oriented, lower-level language than Python.  Data is shown for solving for variuos complexities of ODEs from the basic exponential to modelling sound wave propagation as we did in Homework 4.
     \end{abstract}
   \end{@twocolumnfalse}
 ]
 \section{Background}
 
-\subsection{Numerical Methods and Parallelization}
-Solving systems of differential equations can be a computationally expensive
-task. The error of most algorithms scales on the stepsize of the discretization
-of time. However, stepsize in time is also proportional to the computation
-required. The parareal algorithm, developed by YADA YADA. An alternative would
-be to parallelize by space - 
+\subsection{Numerical Methods and \\ Parallelization}
+Solving systems of differential equations can be a computationally expensive task. The error of most algorithms scales on the stepsize of the discretization of time. However, stepsize in time is also proportional to the computation required.  It would be nice to allow for strong scaling where a problem can be solved in a reasonable time for very small time steps.
+
+Another obstacle to trying to paralleliize numerical methods is that the methods are inherently serial in time - in that evaluation of the next time $n+1$ depends on the previous values, say those at time $n-1$ and $n$.  This setup does not allow for parallelism.
+
+ An alternative paradigm is a parallelism by space, where the result vector is divided up to different processors.  In this way, the 
+
+In general, the
+
+Due to the more theoretical nature of the parareal method, we look to describe its stability and error numerically.
 
 \subsection{Stability of the Parareal}
 
+FROM THE SLIDES 
+
+TODO BKSIM? ASHI carry?
+
 \subsection{Error of the Parareal}
+
+FROM THE SLIDES? + Adjust?
+TODO BKSIM? ASHI carry?
+
+Show that this parareal method will approach, with large enough k (enough iterations) to approach the error of the fine method.  However, with too large of a k and a lower quality factor (ratio of fine to coarse), the time for the parareal could potentially take longer than the direct serial computation.
 
 \section{Methodology}
 
-The general parareal method, as described by YADA YADA can be SEEN BELOW YAR
+The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is a general algorithm that allows parallelization in time.  It does so by using a cheaper (lower order, lesser resolution) approximation first, and then makes corrections in parallel.  The entire process is then iterative and tuned for a given amount of iterations.  Therefore, the algorithm is k repetitions of a serial coarse method updated by a finer method run in parallel for subsections.
 
 \begin{algorithm}[t]
     \KwIn{Temporal discretization $t^n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
     \KwIn{Coarse scheme $g_{\Delta t}$}
-    \KwIn{Finer scheme $g_{\textnormal{fine}}$}
+    \KwIn{Finer	 scheme $g_{\textnormal{fine}}$}
     Compute $u_1^{n+1} = g_{\Delta t}(t^n, u^n)$\;
     Compute the corrections $\delta g^n(u_1^n) = g_{\textnormal{fine}}(t^n,
     u^n) - g_{\Delta t}(t^n, u^n)$ in parallel\;
@@ -98,28 +106,76 @@ The general parareal method, as described by YADA YADA can be SEEN BELOW YAR
  \label{alg:parareal}
 \end{algorithm}
 
+\subsection{Visualization of Diagram}
+bksim TODO
+
+\subsection{Analysis of Speedup and Efficiency}
+
+ashi TODO from our computation on the paper
+
 \subsection{Explored Tests}
-We wished to explore certain tests
+We wished to explore certain tests that would span the space of possible parameters to the parareal as well as possible applications in different ODE systems.  Our baseline was looking to compare 
 
 \section{Results}
-We compared various runs of 
+
+TODO CONSIDER IF WE WANT TO MOVE SOME OF THE ANALYSIS TO THE DISCUSSION SECTION AND FRAME THE DISCUSSION WITH THE SAME SUBSECTIONS
 
 \subsection{Comparison to Serial with $g_{fine}$ as \\a Forward Euler with
 Smaller $\Delta t$}
 
+We looked 
+
+We see that the speedups are
+
+Note that increasing the iterations
+
+ashi TODO add figures and check my logic/bs to match it to the data
+
 \subsection{Comparison to Serial with $g_{fine}$ as \\Higher Order Methods}
 
+TODO team?
+
 \subsection{Comparison to a Forward Euler \\Parallelized by Space}
+
+For the speaker problem, we designed a problem-specific method to parallelize in space and divide Pierce Hall into subsections such that each processor would receive a division of the building to compute.
+
+bksim TODO
 
 \subsection{Comparison to C++ Implementations}
 	The numpy environment combined with the required structure of MPI required certain type/data structure conversions which will take time.not not cunot cu
 
 \subsection{Summary of Performance}
 
+TODO
+
+\subsection{Strong and Weak Scaling Analysis}
+
+ashi TODO by taking some numbers and following %https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance
+
 \section{Discussion}
+
+\subsection{Demonstrating Scaling}
+
+As we can see, we do see the effects of strong scaling
+
+TODO analyze
+
+
+\subsection{Possible Optimizations}
+
+TODO Wesley
 
 \section{Conclusion and Future Work}
 
+We see that (HOPE IT WORKS WELL OR ELSE...)
+Most of the further work would be in optimization.  We are trying to measure performance in python, which is not the ideal benchmarking language for efficiency and speedups.  A port over to C++ using the MPI libraries in C++ rather than the mpi4py libraries in python would be ideal.  Other optimizations mentioned above coud also be implemented.  To further explore the parareal algorithm would involve many test cases and to see how the parareal algorithm compares to other approaches - since the actual time and iterations necessary depend on the system of ODEs to solve.
+
+On the other hand, paralleism by space already requires a very problem-specific design.  The strong scaling efficiency of parallelism by space is high and is conceptually embarrisingly parallel and easier to create.  However, the limitations are in the requirement for the code to be designed for the problem - how to divide by space so as to allow for the maximum number of even divisions.  The lack of generalism is not as beautiful as the parareal algorithm but may lend itself to faster speedups.
+
+All in all, we have implemented and begun to explore some techniques of looking for strong and weak scaling efficiencies for solving ODEs.  The parareal algorithm is beautiful in its theoretical advantages - in terms of stability, error and efficiency.  However, the method, as a very generalized method, requires deeper analysis for the specific problem.  The main variable will be in the difference in the coarse and fine methods (be it lower and higher order or a higher and lower resolution for the same method).  The tradeoffs that must be computed and optimized for would be problem specific.
+
 \section{References}
+
+Bibtex Citations for the Slides, and for %https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance
 
 \end{document}
