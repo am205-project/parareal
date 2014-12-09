@@ -1,0 +1,34 @@
+
+
+Example 1
+
+Parameters:
+numSteps:        100
+Quality Factor:  100
+Corrections:     2
+
+Serial Max Abs Error    = 6.183302e-05
+Parallel Max Abs Error  = 6.149600e-03
+Serial Mean Abs Error    = 2.634875e-05
+Parallel Mean Abs Error  = 2.622687e-03
+Serial Time:   0.226073 secs
+Parallel Time: 3.781236 secs
+numSteps,Quality Factor,Corrections,Serial Max Abs Error,Parallel Max Abs Error,Serial Mean Abs Error,Parallel Mean Abs Error, Serial Time, Parallel Time
+100, 100, 2, 6.183302e-05, 6.149600e-03, 2.634875e-05, 2.622687e-03, 0.226073, 3.781236
+
+
+Example 2
+
+Parameters:
+numSteps:        100
+Quality Factor:  100
+Corrections:     2
+
+Serial Max Abs Error    = 3.528431e-04
+Parallel Max Abs Error  = 3.706209e-02
+Serial Mean Abs Error    = 1.633509e-04
+Parallel Mean Abs Error  = 1.719938e-02
+Serial Time:   0.323222 secs
+Parallel Time: 6.800989 secs
+numSteps,Quality Factor,Corrections,Serial Max Abs Error,Parallel Max Abs Error,Serial Mean Abs Error,Parallel Mean Abs Error, Serial Time, Parallel Time
+100, 100, 2, 3.528431e-04, 3.706209e-02, 1.633509e-04, 1.719938e-02, 0.323222, 6.800989
