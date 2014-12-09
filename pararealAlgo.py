@@ -41,7 +41,8 @@ def startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
                         dt, tmin, tmax, numSteps)
 
                 # update unext for next iteration
-                upast = np.copy(unext)
+                #upast = np.copy(unext)
+                upast = unext
     else:
         return upast
 

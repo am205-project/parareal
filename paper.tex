@@ -44,7 +44,7 @@
 \title{Explorations to Optimize the Parareal Algorithm \\to Solve ODEs in Given Applications}
 \author{Wesley Chen, Brandon Sim, Andy Shi \\
 Harvard University, Applied Math 205 Final Project}
-\date{December 15, 2014}
+\date{December 10, 2014}
 
 % No indentation for new paragraphs
 \setlength\parindent{0pt}
@@ -57,14 +57,29 @@ Harvard University, Applied Math 205 Final Project}
     \begin{@twocolumnfalse}
     \maketitle
     \begin{abstract}
-    We implement the parareal algorithm to solve various ODEs and compare in terms of accuracy, speedup and efficiency. We explore the effect of using differnt solution operators (a coarse and a fine as required by the method).  Our code is written in python using mpi4py to parallelize.  We observe slight speedups in our small scale tests up to 64 processors on Harvard's Odyssey cluster.  We analyze possible reasons as to why our implementation may not be ideal and some tradeoffs that are taken in the parareal implementation.  Further optimizations are proposed and rationalized as next steps including ports of to C++ and BLAS libraries which is a more performance-oriented, lower-level language than Python.  Data is shown for solving for variuos complexities of ODEs from the basic exponential to modelling sound wave propagation as we did in Homework 4.
+    We implement the parareal algorithm to solve various ODEs and compare in
+    terms of accuracy, speedup and efficiency. We explore the effect of using
+    differnt solution operators (a coarse and a fine as required by the method).
+    Our code is written in python using mpi4py to parallelize. We observe
+    slight speedups in our small scale tests up to 64 processors on Harvard's
+    Odyssey cluster. We analyze possible reasons as to why our implementation
+    may not be ideal and some tradeoffs that are taken in the parareal
+    implementation. Further optimizations are proposed and rationalized as next
+    steps including ports of to C++ and BLAS libraries which is a more
+    performance-oriented, lower-level language than Python. Data is shown for
+    solving for variuos complexities of ODEs from the basic exponential to
+    modelling sound wave propagation as we did in Homework 4.
     \end{abstract}
-  \end{@twocolumnfalse}
+    \end{@twocolumnfalse}
 ]
 \section{Background}
 
 \subsection{Numerical Methods and \\ Parallelization}
-Solving systems of differential equations can be a computationally expensive task. The error of most algorithms scales on the stepsize of the discretization of time. However, stepsize in time is also proportional to the computation required.  It would be nice to allow for strong scaling where a problem can be solved in a reasonable time for very small time steps.
+Solving systems of differential equations can be a computationally expensive
+task. The error of most algorithms scales on the stepsize of the discretization
+of time. However, stepsize in time is also proportional to the computation
+required. It would be nice to allow for strong scaling where a problem can be
+solved in a reasonable time for very small time steps.
 
 Another obstacle to trying to paralleliize numerical methods is that the methods are inherently serial in time - in that evaluation of the next time $n+1$ depends on the previous values, say those at time $n-1$ and $n$.  This setup does not allow for parallelism.  The only way to incorporate parallelism is to create schemes that have parallelizable components - such as an update or a refinement to a serial portion.  As will be discussed and analyzed in the metodology section, one such scheme would be the parareal algorithm.  For an overview, the parareal algorithm first does a coarse (low-order and fast) approximation, then seeks to iteratively correct using smaller, more refined numerical methods done in parallel from approximated starting points approximated by the coarse solution.
 
@@ -74,24 +89,30 @@ In general, the division in space paradigm is more intuitive to parallelize and 
 
 \section{Methodology}
 
-The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is a general algorithm that allows parallelization in time.  It does so by using a cheaper (lower order, lesser resolution) approximation first, and then makes corrections in parallel.  The entire process is then iterative and tuned for a given amount of iterations.  Therefore, the algorithm is k repetitions of a serial coarse method updated by a finer method run in parallel for subsections.
+The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is
+a general algorithm that allows parallelization in time.  It does so by using a
+cheaper (lower order, lesser resolution) approximation first, and then makes
+corrections in parallel. The entire process is then iterative and tuned for a
+given amount of iterations. Therefore, the algorithm is $k$ repetitions of a
+serial coarse method updated by a finer method run in parallel for subsections.
 
 \begin{algorithm}[t]
     \KwIn{Temporal discretization $t^n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
     \KwIn{Coarse scheme $g_{\Delta t}$}
     \KwIn{Finer	 scheme $g_{\textnormal{fine}}$}
-    Compute $u_1^{n+1} = g_{\Delta t}(t^n, u^n)$\;
-    Compute the corrections $\delta g^n(u_1^n) = g_{\textnormal{fine}}(t^n,
-    u^n) - g_{\Delta t}(t^n, u^n)$ in parallel\;
-    Add the prediction and correction terms as $u_2^{n+1} = g_{\Delta
-    t}(t^n, u_2^n) + \delta g^n(u_1^n)$\;
-    Repeat steps 2 and 3, incrementing the iteration label and using $u_{k+1}^0
-    = u^0$ as the initial condition\
+    Compute $u^1_{n+1} = g_{\Delta t}(t_n, u^1_n)$\;
+    Compute the corrections $\delta g_n(u^1_n) = g_{\textnormal{fine}}(t_n,
+    u^1_n) - g_{\Delta t}(t_n, u^1_n)$ in parallel\;
+    Add the prediction and correction terms as $u^2_{n+1} = g_{\Delta t}(t_n,
+    u^2_n) + \delta g_n(u^1_n)$\;
+    Repeat steps 2 and 3, incrementing the iteration label and using $u^{k+1}_0
+    = u^1_0$ as the initial condition\;
  \caption{Parareal}
  \label{alg:parareal}
 \end{algorithm}
 
 \subsection{Visualization of Scheme}
+
 bksim TODO
 
 \subsection{Stability of the Parareal}
@@ -112,14 +133,17 @@ Show that this parareal method will approach, with large enough k (enough iterat
 ashi TODO ashia from wesley's handwritten analysis
 
 \subsection{Explored Tests}
-We wished to explore certain tests that would span the space of possible parameters to the parareal as well as possible applications in different ODE systems.  Our baseline was looking to compare 
+
+We wished to explore certain tests that would span the space of possible
+parameters to the parareal as well as possible applications in different ODE
+systems. Our baseline was looking to compare 
 
 \section{Results and Discussion}
 
-\subsection{Comparison to Serial with $g_{fine}$ as \\a Forward Euler with
+\subsection{Comparison to Serial with $g_{fine}$ as a Forward Euler with
 Smaller $\Delta t$}
 
-We looked at both $e^x$ as well as TODO WHAT OTHER SCHEME using
+We looked at both $e^x$ as well as TODO WHAT OTHER SCHEME using GET PARAMETERES
 
 Varying Iterations:
 
@@ -130,7 +154,7 @@ Changing the ODE
 
 ashi TODO add figures and check my logic/bs to match it to the data
 
-\subsection{Comparison to Serial with $g_{fine}$ as \\Higher Order Methods}
+\subsection{Comparison to Serial with $g_{fine}$ as Higher Order Methods}
 
 TODO team
 
@@ -149,7 +173,10 @@ TODO compare the computation times (and perhaps a slight change in accuracy of t
 TODO bsim and ashi show graphs and some times for the forward euler parareal versions - the fastest ones or both if we have obht implemented
 
 \subsection{Comparison to C++ Implementations}
-	The numpy environment combined with the required structure of MPI required certain type/data structure conversions which will take time.not not cunot cu
+
+The numpy environment combined with the required structure of MPI required
+certain type/data structure conversions which will take time.not not cunot
+cu
 
 \subsection{Summary of Performance}
 
@@ -157,7 +184,8 @@ TODO team
 
 \subsection{Strong and Weak Scaling Analysis}
 
-ashi TODO by taking some numbers and following %https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance
+ashi TODO by taking some numbers and following
+\url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
 
 \subsection{Demonstrating Scaling}
 
@@ -171,15 +199,34 @@ TODO Wesley
 
 \section{Conclusion and Future Work}
 
-We see that (HOPE IT WORKS WELL OR ELSE...)
-Most of the further work would be in optimization.  We are trying to measure performance in python, which is not the ideal benchmarking language for efficiency and speedups.  A port over to C++ using the MPI libraries in C++ rather than the mpi4py libraries in python would be ideal.  Other optimizations mentioned above coud also be implemented.  To further explore the parareal algorithm would involve many test cases and to see how the parareal algorithm compares to other approaches - since the actual time and iterations necessary depend on the system of ODEs to solve.
+We see that (HOPE IT WORKS WELL OR ELSE...) Most of the further work would be in
+optimization. We are trying to measure performance in Python, which is not the
+ideal benchmarking language for efficiency and speedups. A port over to C++
+using the MPI libraries in C++ rather than the mpi4py libraries in python would
+be ideal. Other optimizations mentioned above could also be implemented. To
+further explore the parareal algorithm would involve many test cases and to see
+how the parareal algorithm compares to other approaches---since the actual time
+and iterations necessary depend on the system of ODEs to solve.
 
-On the other hand, paralleism by space already requires a very problem-specific design.  The strong scaling efficiency of parallelism by space is high and is conceptually embarrisingly parallel and easier to create.  However, the limitations are in the requirement for the code to be designed for the problem - how to divide by space so as to allow for the maximum number of even divisions.  The lack of generalism is not as beautiful as the parareal algorithm but may lend itself to faster speedups.
+On the other hand, paralleism by space already requires a very problem-specific
+design. The strong scaling efficiency of parallelism by space is high and is
+conceptually embarrisingly parallel and easier to create. However, the
+limitations are in the requirement for the code to be designed for the
+problem---how to divide by space so as to allow for the maximum number of even
+divisions. The lack of generalism is not as beautiful as the parareal algorithm
+but may lend itself to faster speedups.
 
-All in all, we have implemented and begun to explore some techniques of looking for strong and weak scaling efficiencies for solving ODEs.  The parareal algorithm is beautiful in its theoretical advantages - in terms of stability, error and efficiency.  However, the method, as a very generalized method, requires deeper analysis for the specific problem.  The main variable will be in the difference in the coarse and fine methods (be it lower and higher order or a higher and lower resolution for the same method).  The tradeoffs that must be computed and optimized for would be problem specific.
+All in all, we have implemented and begun to explore some techniques of looking
+for strong and weak scaling efficiencies for solving ODEs. The parareal
+algorithm is beautiful in its theoretical advantages---in terms of stability,
+error and efficiency. However, the method, as a very generalized method,
+requires deeper analysis for the specific problem. The main variable will be in
+the difference in the coarse and fine methods (be it lower and higher order or a
+higher and lower resolution for the same method). The tradeoffs that must be
+computed and optimized for would be problem specific.
 
 \section{References}
 
-Bibtex Citations for the Slides, and for %https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance
+Bibtex Citations for the Slides, and for \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
 
 \end{document}
