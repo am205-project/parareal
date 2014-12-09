@@ -224,6 +224,11 @@ if __name__ == '__main__':
 
             print("\n\nExample %d\n" %iters)
             iters += 1
+
+            # compute errors
+            p_error = np.abs(p_result - e_result_p)# / abs(e_result)
+            s_error = np.abs(s_result - e_result_s)# / abs(e_result)
+
             # print parameters:
             print("Parameters:")
             print("numSteps:        %d" %numSteps)
@@ -237,10 +242,6 @@ if __name__ == '__main__':
                 print("Exact           = \n" + str(e_result))
                 print("")
 
-            # compute errors
-            p_error = np.abs(p_result - e_result_p)# / abs(e_result)
-            s_error = np.abs(s_result - e_result_s)# / abs(e_result)
-
             # print errors
             #print("Parallel Error = \n" + str(p_error))
             #print("Serial Error = \n" + str(s_error))
@@ -252,3 +253,10 @@ if __name__ == '__main__':
             # print timers
             print("Serial Time:   %f secs" % (s_stop - s_start))
             print("Parallel Time: %f secs" % (p_stop - p_start))
+
+            print("numSteps,Quality Factor,Corrections,Serial Max Abs Error,Parallel Max Abs Error,Serial Mean Abs Error,Parallel Mean Abs Error, Serial Time, Parallel Time")
+
+            print("%d, %d, %d, %e, %e, %e, %e, %f, %f" %(numSteps,
+                qualityFactor, k, np.max(s_error), np.max(p_error),
+                np.mean(s_error), np.mean(p_error), (s_stop - s_start), (p_stop
+                    - p_start)))
