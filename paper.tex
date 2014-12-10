@@ -92,7 +92,7 @@ depends on the previous values, say those at time $n-1$ and $n$. This setup
 does not allow for parallelism. The only way to incorporate parallelism is to
 create schemes that have parallelizable components---such as an update or a
 refinement built on top of a more basic method first computed in serial. As will be discussed and analyzed in the
-metodology section, one such scheme would be the parareal algorithm. As an
+methodology section, one such scheme would be the parareal algorithm. As an
 overview, the parareal algorithm first does a coarse (low-order and fast)
 approximation, then seeks to iteratively correct using smaller, more refined
 numerical methods done in parallel from approximated starting points
@@ -129,7 +129,7 @@ S(n) = \frac{T_\textnormal{serial}}{T_\textnormal{parallel in n cores}}
 Strong scaling is a way to measure performance of a given application depending on if it is CPU-bound. This means that given a fixed problem size, with more processors, the computation time will decrease for each. Programs that are difficult to parallelize will have efficiency expressions like $\frac{1}{\ln p}$ which approaches zero as the number of processors increases by a large amount meaning that adding additional processors does not give much more speedup. We can compute the strong scaling efficiency with the follow expression:
 
 \begin{equation}
-\textnormal{Eff}_{\textnormal{strong}} = \frac{T(1)}{n \cdot T(n)} \cdot 100\%
+\textnormal{Eff}_{\textnormal{strong}} = \frac{T(1)}{n \times T(n)} \times 100\%
 \end{equation}
 
 \subsubsection{Weak Scaling Efficiency}
@@ -137,12 +137,12 @@ Strong scaling is a way to measure performance of a given application depending 
 Weak scaling measures the memory-bound nature of the parallelized application. A weak scaling parallel implementation is one that allows a larger problem proportionally increased for each processor to be solved in the same time as the original. This is usually the more intuitive usage and measure to quantify parallel application performance. Below is the computation for weak scaling efficiency:
 
 \begin{equation}
-\textnormal{Eff}_{\textnormal{weak}} = \frac{T(1)}{T(n)} \cdot 100\%
+\textnormal{Eff}_{\textnormal{weak}} = \frac{T(1)}{T(n)} \times 100\%
 \end{equation}
 
 \subsection{Amdahl's Law}
 
-The final principle when discussing parallel performance is the potential existence of an Amdahl speedup limit. Amdahl's Law seeks to describe the maximum parallel speedup in an overall piece of code when the problem is not embarassingly parallel --- not all of the system can be divided up in parallel. The parallel in time methods must always have some serial component due to the time-dependent nature of the ODE's which will fall under the limitations stated by Amdahl's Law.  His law expresses both best time given $n$ processors as well as the speedup for $n$ processors as a function of $B$, the fractional amount of the algorithm that can be parallelized:
+The final principle when discussing parallel performance is the potential existence of an Amdahl speedup limit. Amdahl's Law seeks to describe the maximum parallel speedup in an overall piece of code when the problem is not embarassingly parallel --- not all of the system can be divided up in parallel. The parallel in time methods must always have some serial component due to the time-dependent nature of the ODE's which will fall under the limitations stated by Amdahl's Law.  His law expresses both best time given $n$ processors as well as the speedup for $n$ processors as a function of $B$, the fractional amount of the algorithm that cannot be parallelized---due to strict serial constraints:
 
 \begin{equation}
 T(n) = T(1) \left( B + \frac{1}{n} (1-B) \right)
@@ -304,9 +304,9 @@ To satisfy these conditions, we have that
 
 \subsubsection{Parareal}
 
-We look to compute a theoretical maximum speedup enabled by the nature of the Parareal algorithm.  As this is a tradeoff between error (with parameter k being the number of iterations of corrections, each which takes another cycle of $g_{\Delta t}$, we seek to express the tradeoff as a function of the quality factor, $Q$, the number of iterations, $k$ and the number of processors $n$.  Our quality factor is defined as the multiplicative factor of additional time necessary to TODO
+We look to compute a theoretical maximum speedup enabled by the nature of the Parareal algorithm.  As this is a tradeoff between error (with parameter k being the number of iterations of corrections, each which takes another cycle of $g_{\Delta t}$, we seek to express the tradeoff as a function of the quality factor, $Q$, the number of iterations, $k$ and the number of processors $n$.  Our quality factor is defined as the multiplicative factor of additional time necessary to compute the solution using the $g_{\textnormal{fine}}$ scheme instead of the $g_{\Delta t}$ method.
 
-Then, the runtime of Parareal is, assuming negligible overhead and ignoring communication speeds and letting $t$ be the time in seconds to compute the coarse $g_{\Delta t}$:
+Then, the runtime of Parareal is, assuming negligible overhead and ignoring communication bandwidth and letting $t$ be the time in seconds to compute the coarse $g_{\Delta t}$:
 
 \begin{equation}
 t + k \left(t + \frac{Qt}{N} \right).
@@ -330,7 +330,7 @@ For the parallelism by space, we are dividing our grid on which we which to solv
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $gamma$
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$
 
 \subsubsection{Parareal}
 
@@ -346,24 +346,32 @@ The Parareal method TODO does this scale well?
 
 \subsubsection{Parallel By Space}
 
-Because this task is embarassingly parallel and nearly 100% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound (with $B$ of 1):
+Because this task is embarassingly parallel and nearly 100% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of (with $B$ of 0):
 
 \[
-est
+S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
 \]
+
+With embarassingly parallel problem setups, we can optimally achieve up to $n$ times speedup with $n$ processors though this number if quite ideal and will be very difficult to approach (large scaling will have different memory management and greater communication overheads and costs).
 
 \subsection{Explored Tests}
 
-WESLEY ENDED HERE, BEFORE THIS IS WESLEY APPROVED
 
-We wished to explore certain tests that would span the space of possible
-parameters to the parareal as well as possible applications in different ODE
-systems. Because there were so many different versions and parameters for the Parareal to test,
+We wished to explore certain tests that would demonstrate the effects of changing various parameters be it from the solution schemes in the parareal to the exact system we were trying to solve.
+
+Due to the sheer number of things to explore, we usually try to compare each run to a benchmark we decided was most useful for comparison's sake and the list of parameters we wished to test are:
+
+\begin{itemize}
+\item
+\item
+\end{itemize}
 
 \section{Results and Discussion}
 
+WESLEY ENDED HERE, BEFORE THIS IS WESLEY APPROVED
+
 \subsection{Expectations}
-TODO WESLEY
+We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations),
 
 \subsection{General Remarks about Results}
 LETS SEE IF I HAVE TO DISCLAIM ANY GLOBAL FAILURES IN OUR RESULTS

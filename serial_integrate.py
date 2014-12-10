@@ -31,7 +31,6 @@ def integrate(deriv, init, time_min, time_max, numSteps, step):
 
     return ys
 
-
 def forward_euler_step(deriv, t, u, dt):
     return(u + dt * deriv(t, u))
 
@@ -40,16 +39,18 @@ def forward_euler(deriv, init, time_min, time_max, numSteps):
             forward_euler_step))
 
 def rk4_step(deriv, t, u, dt):
-    k1 = deriv(t, u)
-    k2 = deriv(t + (dt/2.), u + 0.5*k1*dt)
-    k3 = deriv(t + (dt/2.), u + 0.5*k2*dt)
-    k4 = deriv(t + dt, u + k3*dt)
+    k1 = dt*deriv(t, u)
+    k2 = dt*deriv(t + 0.5*dt, u + 0.5*k1)
+    k3 = dt*deriv(t + 0.5*dt, u + 0.5*k2)
+    k4 = dt*deriv(t + dt, u + k3)
 
-    return(u + ((dt/6.) * (k1 + 2*k2 + 2*k3 + k4)))
+    return u+(k1+2.*k2+2.*k3+k4) / 6.
+    #return(u + ((dt/6.) * (k1 + 2*k2 + 2*k3 + k4)))
 
 def rk4(deriv, init, time_min, time_max, numSteps):
     return(integrate(deriv, init, time_min, time_max, numSteps, rk4_step))
 
+#runge-kutta second order
 def midpoint_step(deriv, t, u, dt):
     k1 = dt * deriv(t, u)
     return(u + dt*deriv(t + 0.5*dt, u + 0.5*k1))
@@ -69,7 +70,9 @@ if __name__ == "__main__":
         exps = np.exp(-t)
         return(exps * np.cos(2*t) + 0.5*exps * np.sin(2*t))
 
-    nsteps_lst = [200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200]
+    #nsteps_lst = [200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200, 102400, 204800, 409600]
+    #nsteps_lst = [32, 64, 128, 256, 512, 1024]
+    nsteps_lst = [200, 400, 800, 1600, 3200, 6400, 12800, 25600]
     init = np.array([1., 0.])
     tmin = 0.0
     tmax = 30.
