@@ -111,7 +111,7 @@ if __name__ == '__main__':
 # Global constants
   xMin, xMax = 0.0, 1.0     # Domain boundaries
   yMin, yMax = 0.0, 1.0     # Domain boundaries
-  Nx = 256                   # Number of total grid points in x
+  Nx = 512                   # Number of total grid points in x
   Ny = Nx                   # Number of total grid points in y
   dx = (xMax-xMin)/(Nx-1)   # Grid spacing, Delta x
   dy = (yMax-yMin)/(Ny-1)   # Grid spacing, Delta y
