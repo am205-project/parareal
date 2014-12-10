@@ -92,7 +92,7 @@ depends on the previous values, say those at time $n-1$ and $n$. This setup
 does not allow for parallelism. The only way to incorporate parallelism is to
 create schemes that have parallelizable components---such as an update or a
 refinement built on top of a more basic method first computed in serial. As will be discussed and analyzed in the
-metodology section, one such scheme would be the parareal algorithm. As an
+methodology section, one such scheme would be the parareal algorithm. As an
 overview, the parareal algorithm first does a coarse (low-order and fast)
 approximation, then seeks to iteratively correct using smaller, more refined
 numerical methods done in parallel from approximated starting points
@@ -129,7 +129,7 @@ S(n) = \frac{T_\textnormal{serial}}{T_\textnormal{parallel in n cores}}
 Strong scaling is a way to measure performance of a given application depending on if it is CPU-bound. This means that given a fixed problem size, with more processors, the computation time will decrease for each. Programs that are difficult to parallelize will have efficiency expressions like $\frac{1}{\ln p}$ which approaches zero as the number of processors increases by a large amount meaning that adding additional processors does not give much more speedup. We can compute the strong scaling efficiency with the follow expression:
 
 \begin{equation}
-\textnormal{Eff}_{\textnormal{strong}} = \frac{T(1)}{n * T(n)} * 100\%
+\textnormal{Eff}_{\textnormal{strong}} = \frac{T(1)}{n \times T(n)} \times 100\%
 \end{equation}
 
 \subsubsection{Weak Scaling Efficiency}
@@ -137,7 +137,7 @@ Strong scaling is a way to measure performance of a given application depending 
 Weak scaling measures the memory-bound nature of the parallelized application. A weak scaling parallel implementation is one that allows a larger problem proportionally increased for each processor to be solved in the same time as the original. This is usually the more intuitive usage and measure to quantify parallel application performance. Below is the computation for weak scaling efficiency:
 
 \begin{equation}
-\textnormal{Eff}_{\textnormal{weak}} = \frac{T(1)}{T(n)} * 100\%
+\textnormal{Eff}_{\textnormal{weak}} = \frac{T(1)}{T(n)} \times 100\%
 \end{equation}
 
 \subsection{Amdahl's Law}
@@ -330,7 +330,7 @@ For the parallelism by space, we are dividing our grid on which we which to solv
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $gamma$
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$
 
 \subsubsection{Parareal}
 
