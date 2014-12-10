@@ -154,7 +154,7 @@ T(n) = T(1) \left( B + \frac{1}{n} (1-B) \right)
 \end{equation}
 
 \begin{equation}
-S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)}
+S(n) = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)}
 \end{equation}
 
 \section{Methodology}
@@ -366,24 +366,36 @@ One of the main drawbacks of using Amdahl's Law as benchmarks in analysis is in 
 
 We first try to express $B$ as function of the quality factor $Q$ and the number of correction steps of the parareal $k$.
 
-From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + K(t+ Qt)$.  Of this, the only parallelizable part is the $kQt$ term.  Thus to find the expression of the parallelizable portion, we simplify:
+From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + k(t+ Qt)$.  Of this, the only parallelizable part is the $kQt$ term.  Thus to find the expression of the non-parallelizable portion, we simplify:
 
 \[
-AA
+B = \frac{t+kt}{t+kt+kQt} = \frac{1+k}{kQ+k+1}
 \]
 
 Now to replace this into Amdahl's Law, we have:
 
 \[
-S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
+\begin{aligned}
+S(n) &= \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{1}{\left( B + \frac{1}{n} (1-B) \right)}\\
+       &= \frac{T(1)}{T(1) \left( \frac{1+k}{kQ+k+1} + \frac{1}{n} (1- \frac{1+k}{kQ+k+1}) \right)} \\
+       &= \frac{n(kQ+k+1)}{n+nk+kQ}
+\end{aligned}
 \]
+
+As written below, we have used $Q = 100$ with various $k$.
+
+When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of $S(n) = \frac{203n}{3n+200} \approx 67$
+
+When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of $S(n) = \frac{1011n}{11n+1000} \approx 91$
+
+It is important to note that this speedup is measured with respect to the parareal agorithm done in parallel. This does not compare the Parareal to doing $g_{\textnormal{fine}}$ but rather shows how given infinite processors, our speedup will approach certain asymptotic bounds. We do see however large constants in the denominator which means that we will get better speedup as we increase n past a certain size.
 
 \subsubsection{Parallel By Space}
 
 Because this task is embarassingly parallel and nearly 100% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of (with $B$ of 0):
 
 \[
-S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
+S(n) = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
 \]
 
 With embarassingly parallel problem setups, we can optimally achieve up to $n$ times speedup with $n$ processors though this number if quite ideal and will be very difficult to approach (large scaling will have different memory management and greater communication overheads and costs).
@@ -481,29 +493,16 @@ For the speaker problem, we designed a problem-specific method to parallelize in
 
 bksim TODO GET DATA, AS REQUIRED FROM ABOVE, SHOW GRAPHS
 
-\subsection{Parallelism Paradigm Comparisons}
-
-Now with 3 different parallel implementations, two in time with the parareal, one in space, we compare across the methods to see if we can make any statements about general performance of our different paradigms.
-
-TODO WESLEY
-
-TODO compare the computation times (and perhaps a slight change in accuracy of the results) between both parareal methods the best in the sections before hand
-
-TODO bsim and ashi show graphs and some times for the forward Euler parareal
-versions---the fastest ones or both if we have both implemented
-
-\subsection{Comparison to C++ Implementations}
-
-The numpy environment combined with the required structure of MPI required
-certain type/data structure conversions which will take time.not not cunot cu
 
 \subsection{Summary of Performance}
 
 TODO team
 
-\subsection{Demonstrating Scaling}
+\subsection{Demonstrating Scaling and Efficiency}
 
-ashi TODO by taking some numbers and following
+\subsection{Parallel in Space}
+
+bsim TODO eventually
 
 As we can see, we do see the effects of strong scaling
 
@@ -520,6 +519,8 @@ further explore the parareal algorithm would involve many test cases and to see
 how the parareal algorithm compares to other approaches---since the actual time
 and iterations necessary depend on the system of ODEs to solve.
 
+TODO NUMPY WRITE FATST HING
+
 On the other hand, parallelism by space already requires a very problem-specific
 design. The strong scaling efficiency of parallelism by space is high and is
 conceptually embarrassingly parallel and easier to create. However, the
@@ -528,10 +529,9 @@ problem---how to divide by space so as to allow for the maximum number of even
 divisions. The lack of generality is not as beautiful as the parareal algorithm
 but may lend itself to faster speedups.
 
-TODO Wesley
+TODO WRITE ABOUT BETTER DATA COLLECTION
 
 \section{Conclusion and Future Work}
-
 
 All in all, we have implemented and begun to explore some techniques of looking
 for strong and weak scaling efficiencies for solving ODEs. The parareal
