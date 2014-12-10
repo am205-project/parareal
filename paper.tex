@@ -117,7 +117,7 @@ time can offer.
 
 The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is
 a generalalized algorithm which allows for parallelization in time. It does so by using a
-cheaper ($g_{\Delta t}$)---lower order or lesser resolution, approximation first which it then corrects by evaluating segments with a finer method ($g_{fine}$). The correction step from the approximation can be done in parallel. Multiple iterations can be performed to achieve an error provably asymptotically equal to a full serial computation of $g_{fine}$. The exact number of iterations required to achieve certain levels of convergence depends on the problem and must be tuned top optimize for speedup for a given system. In summary, the algorithm is $k$ repetitions of a
+cheaper ($g_{\Delta t}$)---lower order or lesser resolution, approximation first which it then corrects by evaluating segments with a finer method ($g_{\textnormal{fine}}$). The correction step from the approximation can be done in parallel. Multiple iterations can be performed to achieve an error provably asymptotically equal to a full serial computation of $g_{\textnormal{fine}}$. The exact number of iterations required to achieve certain levels of convergence depends on the problem and must be tuned top optimize for speedup for a given system. In summary, the algorithm is $k$ repetitions of a
 correction process which requires running updated by a finer method run in parallel for subsections.
 
 \begin{algorithm}[t]
@@ -135,9 +135,9 @@ correction process which requires running updated by a finer method run in paral
  \label{alg:parareal}
 \end{algorithm}
 
-The beauty is the parareal method can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{fine}$ solution operators.  The $g_{fine}$ solution is to a more computationally expensive method but assumed to provide either greater resolution or lower error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code.
+The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
 
-\subsection{Visualization of Scheme}
+\subsection{Visualization of Parareal Scheme}
 
 bksim TODO put a graph because maybe it'll help? the slides have a version
 
@@ -182,14 +182,29 @@ We look to compute a theoretical maximum speedup enabled by the nature of the Pa
 Then, the runtime of Parareal is, assuming negligible setup and
 aggregation time,
 
+TODO WESLEY
+
 \begin{equation}
 t + k(t + \frac{Qt}{N}).
 \end{equation}
 
 The first t seconds comes from the first coarse approximation, without which the parareal algorithm degenerates to $g_{\Delta t}$,  In order for there to be a speedup relative to the fine operator, we require
 that $t + k(t + Qt/N) < Qt$, or $k < \frac{Q - 1}{1 + Q/N}$ or $N > \frac{Qk}{Q
-- 1 - k}$. This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, k, is important for error convergence to that of $g_{fine}$.  However, this optimal k is a problem-specific parameter and must be optimized for.
+- 1 - k}$. This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, k, is important for error convergence to that of $g_{\textnormal{fine}}$.  However, this optimal k is a problem-specific parameter and must be optimized for.
 
+TODO PARALLEL IN SPACE ANALYSIS
+
+\subsection{Incorporating Communication}
+
+TODO WESLEY
+
+TODO PARALLEL IN SPACE ANALYSIS
+
+\subsection{Amdahl's Law Analysis}
+
+TODO WESLEY
+
+TODO PARALLEL IN SPACE ANALYSIS
 
 \subsection{Explored Tests}
 
@@ -202,9 +217,9 @@ systems. Because there were so many different versions and parameteres for the p
 \subsection{Expectations}
 TODO WESLEY
 \subsection{General Remarks about Resuts}
-One of the TODO WESEY
+One of the TODO WESLEY
 
-\subsection{Comparison to Serial with $g_{fine}$ as a Forward Euler with
+\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as a Forward Euler with
 Smaller $\Delta t$}
 
 We implemented the Parareal algorithm in Python, using mpi4py to parallelize it.
@@ -224,7 +239,7 @@ We ran the algorithm on different numbers of processors and varied $k$ and $Q$.
 Varying Iterations:
 ]
 Varying Quality Factor:
-We define the quality factor in this case for how many times smaller the Euler method used for $g_{fine}$ is compared to the Euler method used for $g_{\Delta t}$
+We define the quality factor in this case for how many times smaller the Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method used for $g_{\Delta t}$
 
 Changing the ODE
 
@@ -254,7 +269,7 @@ TODO ashi sort out the figure and match and replace if needbe
 \label{fig:run_v_k}
 \end{figure}
 
-\subsection{Comparison to Serial with $g_{fine}$ as Higher Order Methods}
+\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as Higher Order Methods}
 
 TODO team
 
@@ -286,22 +301,15 @@ certain type/data structure conversions which will take time.not not cunot cu
 
 TODO team
 
-\subsection{Strong and Weak Scaling Analysis}
+\subsection{Demonstrating Scaling}
 
 ashi TODO by taking some numbers and following
-\url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
-
-\subsection{Demonstrating Scaling}
 
 As we can see, we do see the effects of strong scaling
 
 TODO analyze
 
-\subsection{Possible Optimizations}
-
-TODO WESLEY
-
-\section{Conclusion and Future Work}
+\subsection{Possible Optimizations and Future Work}
 
 We see that (HOPE IT WORKS WELL OR ELSE...) Most of the further work would be in
 optimization. We are trying to measure performance in Python, which is not the
@@ -319,6 +327,11 @@ limitations are in the requirement for the code to be designed for the
 problem---how to divide by space so as to allow for the maximum number of even
 divisions. The lack of generality is not as beautiful as the parareal algorithm
 but may lend itself to faster speedups.
+
+TODO Wesley
+
+\section{Conclusion and Future Work}
+
 
 All in all, we have implemented and begun to explore some techniques of looking
 for strong and weak scaling efficiencies for solving ODEs. The parareal
