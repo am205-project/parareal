@@ -7,19 +7,25 @@
 \BOOKMARK [2][-]{subsection.2.3}{Error of the Parareal}{section.2}% 7
 \BOOKMARK [2][-]{subsection.2.4}{Stability of the Parareal}{section.2}% 8
 \BOOKMARK [2][-]{subsection.2.5}{Parallel Tradeoff Analysis}{section.2}% 9
-\BOOKMARK [2][-]{subsection.2.6}{Incorporating Communication}{section.2}% 10
-\BOOKMARK [2][-]{subsection.2.7}{Amdahl's Law Analysis}{section.2}% 11
-\BOOKMARK [2][-]{subsection.2.8}{Explored Tests}{section.2}% 12
-\BOOKMARK [1][-]{section.3}{Results and Discussion}{}% 13
-\BOOKMARK [2][-]{subsection.3.1}{Expectations}{section.3}% 14
-\BOOKMARK [2][-]{subsection.3.2}{General Remarks about Results}{section.3}% 15
-\BOOKMARK [2][-]{subsection.3.3}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 16
-\BOOKMARK [2][-]{subsection.3.4}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 17
-\BOOKMARK [2][-]{subsection.3.5}{Parallelism by Space Paradigm}{section.3}% 18
-\BOOKMARK [2][-]{subsection.3.6}{Parallelism Paradigm Comparisons}{section.3}% 19
-\BOOKMARK [2][-]{subsection.3.7}{Comparison to C++ Implementations}{section.3}% 20
-\BOOKMARK [2][-]{subsection.3.8}{Summary of Performance}{section.3}% 21
-\BOOKMARK [2][-]{subsection.3.9}{Demonstrating Scaling}{section.3}% 22
-\BOOKMARK [2][-]{subsection.3.10}{Possible Optimizations and Future Work}{section.3}% 23
-\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 24
-\BOOKMARK [1][-]{section.5}{References}{}% 25
+\BOOKMARK [3][-]{subsubsection.2.5.1}{Parareal}{subsection.2.5}% 10
+\BOOKMARK [3][-]{subsubsection.2.5.2}{Parallel By Space}{subsection.2.5}% 11
+\BOOKMARK [2][-]{subsection.2.6}{Incorporating Communication}{section.2}% 12
+\BOOKMARK [3][-]{subsubsection.2.6.1}{Parareal}{subsection.2.6}% 13
+\BOOKMARK [3][-]{subsubsection.2.6.2}{Parallel By Space}{subsection.2.6}% 14
+\BOOKMARK [2][-]{subsection.2.7}{Amdahl's Law Analysis}{section.2}% 15
+\BOOKMARK [3][-]{subsubsection.2.7.1}{Parareal}{subsection.2.7}% 16
+\BOOKMARK [3][-]{subsubsection.2.7.2}{Parallel By Space}{subsection.2.7}% 17
+\BOOKMARK [2][-]{subsection.2.8}{Explored Tests}{section.2}% 18
+\BOOKMARK [1][-]{section.3}{Results and Discussion}{}% 19
+\BOOKMARK [2][-]{subsection.3.1}{Expectations}{section.3}% 20
+\BOOKMARK [2][-]{subsection.3.2}{General Remarks about Results}{section.3}% 21
+\BOOKMARK [2][-]{subsection.3.3}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 22
+\BOOKMARK [2][-]{subsection.3.4}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 23
+\BOOKMARK [2][-]{subsection.3.5}{Parallelism by Space Paradigm}{section.3}% 24
+\BOOKMARK [2][-]{subsection.3.6}{Parallelism Paradigm Comparisons}{section.3}% 25
+\BOOKMARK [2][-]{subsection.3.7}{Comparison to C++ Implementations}{section.3}% 26
+\BOOKMARK [2][-]{subsection.3.8}{Summary of Performance}{section.3}% 27
+\BOOKMARK [2][-]{subsection.3.9}{Demonstrating Scaling}{section.3}% 28
+\BOOKMARK [2][-]{subsection.3.10}{Possible Optimizations and Future Work}{section.3}% 29
+\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 30
+\BOOKMARK [1][-]{section.5}{References}{}% 31
