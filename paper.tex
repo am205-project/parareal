@@ -22,6 +22,9 @@
  
 % Sets the page margins to 1 inch each side
 \usepackage[margin=1in]{geometry}
+% force pictures to go where you want
+\usepackage{float}
+
 \geometry{letterpaper}
 %\addtolength{\oddsidemargin}{-0.875in} 
 %\addtolength{\evensidemargin}{-0.875in} 
@@ -57,7 +60,6 @@ Harvard University, Applied Math 205 Final Project}
 %\begin{@twocolumnfalse}
 \maketitle
 \begin{abstract}
-
 We look to achieve strong scaling in parallelizing numerical ODE methods. We test both parallelism by result space as well as parallelism by time, with the Parareal algorithm, to solve various ODEs.  We measure performance and compare in
 terms of accuracy, speedup and efficiency. We provide some theoretical analysis for the Parareal algorithm and compare its tradeoff to paralleism by space, For the Parareal agorithm, we observe
 light speedups in our small scale tests up to 64 processors on Harvard's
@@ -149,7 +151,13 @@ The beauty of the parareal method is that it can be adapted into many different 
 
 \subsection{Visualization of Parareal Scheme}
 
-bksim TODO put a graph because maybe it'll help? the slides have a version
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.75\linewidth]{parareal_visualization.png}
+\caption{Graphical representation of the parareal scheme.}
+\label{fig:pararealvis}
+\end{center}
+\end{figure}
 
 \subsection{Convergence of the Parareal}
 

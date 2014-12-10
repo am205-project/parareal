@@ -72,7 +72,7 @@ if __name__ == "__main__":
     nsteps_lst = [200, 400, 800, 1600, 3200, 6400, 12800, 25600, 51200]
     init = np.array([1., 0.])
     tmin = 0.0
-    tmax = 20.
+    tmax = 30.
     #print("type,nsteps,err")
     with open('out', 'wb') as f:
         f.write('type,nsteps,err\n')
