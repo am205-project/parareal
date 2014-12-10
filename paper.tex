@@ -15,6 +15,7 @@
 \usepackage{hyperref} % Can have actual links
 \usepackage{mathpazo}
 \usepackage[linesnumbered,vlined,ruled]{algorithm2e} % algorithm
+\usepackage{microtype}
 
 %Suggested by TeXworks
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
@@ -92,7 +93,7 @@ depends on the previous values, say those at time $n-1$ and $n$. This setup
 does not allow for parallelism. The only way to incorporate parallelism is to
 create schemes that have parallelizable components---such as an update or a
 refinement built on top of a more basic method first computed in serial. As will be discussed and analyzed in the
-metodology section, one such scheme would be the parareal algorithm. As an
+methodology section, one such scheme would be the parareal algorithm. As an
 overview, the parareal algorithm first does a coarse (low-order and fast)
 approximation, then seeks to iteratively correct using smaller, more refined
 numerical methods done in parallel from approximated starting points
@@ -114,7 +115,11 @@ time can offer.
 
 \subsection{Measuring Parallel Performance and Amdahl's Law}
 
-Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency.  Strong and weak scaling are common measures for the different ways a program can benefit from increased parallellism and more processors as well as the limitations that dictate the speedups. In each of the below subsections, $T(n)$ represents the computation of using $n$ processors and the same notation for speedup.
+Performance of parallel algorithms are usually measured in terms of 3 different
+metrics: speedup, strong scalling efficiency and weak scaling efficiency.
+Strong and weak scaling are common measures for the different ways a program can
+benefit from increased parallellism and more processors as well as the
+limitations that dictate the speedups~\cite{parallelscaling}. In each of the below subsections, $T(n)$ represents the computation of using $n$ processors and the same notation for speedup.
 
 \subsubsection{Speedup}
 
@@ -129,7 +134,7 @@ S(n) = \frac{T_\textnormal{serial}}{T_\textnormal{parallel in n cores}}
 Strong scaling is a way to measure performance of a given application depending on if it is CPU-bound. This means that given a fixed problem size, with more processors, the computation time will decrease for each. Programs that are difficult to parallelize will have efficiency expressions like $\frac{1}{\ln p}$ which approaches zero as the number of processors increases by a large amount meaning that adding additional processors does not give much more speedup. We can compute the strong scaling efficiency with the follow expression:
 
 \begin{equation}
-\textnormal{Eff}_{\textnormal{strong}} = \frac{T(1)}{n * T(n)} * 100\%
+\textnormal{Eff}_{\textnormal{strong}} = \frac{T(1)}{n \times T(n)} \times 100\%
 \end{equation}
 
 \subsubsection{Weak Scaling Efficiency}
@@ -137,7 +142,7 @@ Strong scaling is a way to measure performance of a given application depending 
 Weak scaling measures the memory-bound nature of the parallelized application. A weak scaling parallel implementation is one that allows a larger problem proportionally increased for each processor to be solved in the same time as the original. This is usually the more intuitive usage and measure to quantify parallel application performance. Below is the computation for weak scaling efficiency:
 
 \begin{equation}
-\textnormal{Eff}_{\textnormal{weak}} = \frac{T(1)}{T(n)} * 100\%
+\textnormal{Eff}_{\textnormal{weak}} = \frac{T(1)}{T(n)} \times 100\%
 \end{equation}
 
 \subsection{Amdahl's Law}
@@ -154,18 +159,18 @@ S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 \section{Methodology}
 
-The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is
-a generalized algorithm which allows for parallelization in time. It does so
-by using a cheaper ($g_{\Delta t}$)---a lower order or lesser resolution
-approximation first, which it then corrects by evaluating segments with a finer
-method $g_{\textnormal{fine}}$. The correction step from the approximation can
-be done in parallel. Multiple iterations can be performed to achieve an error
-provably asymptotically equal to a full serial computation of
-$g_{\textnormal{fine}}$. The exact number of iterations required to achieve
-certain levels of convergence depends on the problem and must be tuned top
-optimize for speedup for a given system. In summary, the algorithm is $k$
-repetitions of a correction process which requires running updated by a finer
-method run in parallel for subsections.
+The parareal algorithm, developed by Lions, Maday and Turinici in
+2001~\cite{lions2001parareal}, is a generalized algorithm which allows for
+parallelization in time. It does so by using a cheaper ($g_{\Delta t}$)---a
+lower order or lesser resolution approximation first, which it then corrects by
+evaluating segments with a finer method $g_{\textnormal{fine}}$. The correction
+step from the approximation can be done in parallel. Multiple iterations can be
+performed to achieve an error provably asymptotically equal to a full serial
+computation of $g_{\textnormal{fine}}$. The exact number of iterations required
+to achieve certain levels of convergence depends on the problem and must be
+tuned top optimize for speedup for a given system. In summary, the algorithm is
+$k$ repetitions of a correction process which requires running updated by a
+finer method run in parallel for subsections.
 
 The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
 
@@ -209,7 +214,7 @@ $g_{\textnormal{fine}} \to g$.
 
 \textbf{Theorem}: The order of accuracy of the Parareal method with coarse
 solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. We can prove
-this using induction [Bal]. 
+this using induction \cite{bal2005convergence}. 
 
 \emph{Proof}: By induction. 
 
@@ -272,8 +277,7 @@ equation being solved.
 
 Let us consider the ODE $du/dt = \lambda u$. Let $g_{\textnormal{fine}}(t_n,
 u_n) = \bar{g_{\textnormal{fine}}}u_n$ and $g_{\Delta t}(t_n, u_n) =
-\bar{g_{\Delta t}} u_n$. As shown by Staff et al. [cite], the parareal method
-becomes 
+\bar{g_{\Delta t}} u_n$. As shown by Staff et al. \cite{staff2005stability}, the parareal method becomes 
 
 \[ u_n^k = \left( \sum_{j=0}^k {n \choose j} (\bar{g_{\textnormal{fine}}} -
 g_{\Delta t})^j \bar{g_{\Delta t}}^{n-j} \right) u_0 = H(\bar{g_{\Delta
@@ -362,10 +366,10 @@ One of the main drawbacks of using Amdahl's Law as benchmarks in analysis is in 
 
 We first try to express $B$ as function of the quality factor $Q$ and the number of correction steps of the parareal $k$.
 
-From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + K(t+ Qt)$.  Of this, the only parallelizable part is the kQt term.  Thus to find the expression of the parallelizable portion, we simplify:
+From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + K(t+ Qt)$.  Of this, the only parallelizable part is the $kQt$ term.  Thus to find the expression of the parallelizable portion, we simplify:
 
 \[
-
+AA
 \]
 
 Now to replace this into Amdahl's Law, we have:
@@ -412,7 +416,7 @@ Smaller $\Delta t$}
 
 We implemented the Parareal algorithm in Python, using mpi4py to parallelize it.
 Our coarse operator was forward Euler step, with 100 steps, while the fine
-operator was forward Euler, with $Q * 100$ steps, where $Q$ is the quality
+operator was forward Euler, with $Q \cdot 100$ steps, where $Q$ is the quality
 factor. We tested the Parareal algorithm on two sets of differential equations:
 
 \[
@@ -425,7 +429,7 @@ y''(t) + 2y'(t) + 5y(t) = 0, \, \, y(0) = 1, \, y'(0) = 0.
 We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
 
 Varying Iterations:
-]
+
 Varying Quality Factor:
 We define the quality factor in this case for how many times smaller the Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method used for $g_{\Delta t}$
 
@@ -538,16 +542,10 @@ the difference in the coarse and fine methods (be it lower and higher order or a
 higher and lower resolution for the same method). The tradeoffs that must be
 computed and optimized for would be problem specific.
 
-\section{References}
+\nocite{*}
+\bibliographystyle{unsrt}
+\bibliography{paper}
 
 Bibtex Citations for the Slides, and for \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
-
-%\bibliographystyle{unsrt}
-%\bibliography{poster/sample}
-
-Guilliame Bal paper
-
-Stability of the Parareal Algorithm by Staff et al
-
 
 \end{document}

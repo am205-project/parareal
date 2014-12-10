@@ -11,7 +11,7 @@ from serial_euler import forward_euler
 from serial_euler import forward_euler_step
 
 # Parareal begin
-def startParareal(deriv, init, k, tmin, tmax, numSteps, comm, 
+def startParareal(deriv, init, k, tmin, tmax, numSteps, comm, exact=None,
         qualityFactor = 100):
     '''Starts running k iterations of the parareal algorithm.  In each
     iteration, the program runs the coarse method in serial, then fine
@@ -33,7 +33,7 @@ def startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
 
             # pass in a coarse answer to refine and correct, vectorized
             corrections = parallel_corrections(deriv, upast, tmin, tmax,
-                    numSteps, qualityFactor, comm, p_root=0)
+                    numSteps, qualityFactor, comm, exact=exact, p_root=0)
 
             if rank == 0:
                 # get a coarse answer for the next iteration, vectorized
@@ -78,7 +78,7 @@ def serial_coarse_with_correction(deriv, init, corrections, dt, tmin, tmax,
     return unext
 
 def parallel_corrections(deriv, upast, tmin, tmax, numSteps, qualityFactor,
-        comm, p_root=0):
+        comm, exact=None, p_root=0):
     '''Parallel Portion of the Parareal Algorithm
     Divides the work based on the unext vector, into equal parameters
     Gathers the result on process p_root for the given iteration.
@@ -109,8 +109,12 @@ def parallel_corrections(deriv, upast, tmin, tmax, numSteps, qualityFactor,
     # in a loop, compute fine and then corrections one piece at a time that
     # processor is responsible for, serially
     while (start < end):
-        fineResult = forward_euler(deriv, upast[start], times[start],
-                times[start+1], fineNumSteps)
+        fineResult = None
+        if exact:
+            fineResult = [exact(times[start+1])]
+        else:
+            fineResult = forward_euler(deriv, upast[start], times[start],
+                    times[start+1], fineNumSteps)
 
         # get difference for the last time step of the fine result and compare
         # to coarse result answer for same time
@@ -150,9 +154,11 @@ if __name__ == '__main__':
     parser.add_argument("-q", "--quality-factor", default=100., type=float,
             help="Factor by which to increase the number of time steps")
     parser.add_argument("-k", "--correction-level", default=2, type=int,
-            help="Number of parallel correction steps to do")
-    parser.add_argument("-d", "--debug", default=False, type=bool,
+            help="Number of parallel correction steps to do. Default is 2")
+    parser.add_argument("-d", "--debug", default=False, action='store_true',
             help="If switched on, prints all the outputs. Otherwise just prints errors")
+    parser.add_argument("-e", "--exact", default=False, action='store_true',
+            help="If switched on, uses the exact solution as the fine scheme.  The argument for --quality-factor is ignored")
     args = parser.parse_args()
 
     numSteps = args.nsteps
@@ -199,9 +205,13 @@ if __name__ == '__main__':
         p_start = MPI.Wtime()
 
         # Use parareal algorithm
-        # we only want column 1 so numpy doesn't complain
-        p_result = startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
-                qualityFactor = 100)
+        p_result = None
+        if args.exact:
+            p_result = startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
+                    exact=exact)
+        else:
+            p_result = startParareal(deriv, init, k, tmin, tmax, numSteps, comm,
+                    qualityFactor = 100, exact=None)
 
         # Communciation barrier and ending time with MPI timing function
         comm.barrier()
