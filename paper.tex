@@ -374,9 +374,21 @@ S(n) &= \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 As written below, we have used $Q = 100$ with various $k$.
 
-When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of $S(n) = \frac{203n}{3n+200} \approx 67$
+When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of:
+\[
+\begin{aligned}
+S(n) &= \frac{203n}{3n+200} \\
+\lim_{n\to \infty}S(n) &\approx 67
+\end{aligned}
+\]
 
-When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of $S(n) = \frac{1011n}{11n+1000} \approx 91$
+When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of 
+\[
+\begin{aligned}
+S(n) &= \frac{1011n}{11n+1000} \\
+\lim_{n\to \infty}S(n) &\approx 91
+\end{aligned}
+\]
 
 It is important to note that this speedup is measured with respect to the parareal agorithm done in parallel. This does not compare the Parareal to doing $g_{\textnormal{fine}}$ but rather shows how given infinite processors, our speedup will approach certain asymptotic bounds. We do see however large constants in the denominator which means that we will get better speedup as we increase n past a certain size.
 
@@ -404,8 +416,6 @@ Due to the sheer number of things to explore, we usually try to compare each run
 \end{itemize}
 
 \section{Results and Discussion}
-
-WESLEY ENDED HERE, BEFORE THIS IS WESLEY APPROVED
 
 \subsection{Expectations}
 We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations),
@@ -475,12 +485,6 @@ is nonzero.
 \end{center}
 \end{figure}
 
-\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as Higher Order Methods}
-
-TODO team
-
-IDEALLY WE SHOW THE SAME GRAPHS AS THE ABOVE WITH ALL THE VARIATIONS TESTED
-
 \subsection{Parallelism by Space Paradigm}
 
 To demonstrate parallelism by space, we solve the two-dimensional wave equation by partioning a two-dimensional space domain amongst multiple processors. Specifically, we look to numerically solve
@@ -499,14 +503,14 @@ on the two-dimensional domain $(x, y) \in [0,1]\times[0,1]$ for evolution in tim
 \end{center}
 \end{figure}
 
-Note that each processor receives information from only those adjacent to it; that is, the top left processor in the graphic does not communicate directly with the bottom right processor in the graphic. Rather, information is passed only along shared boundary points to propagate the wave equation. We run this code for three different grid sizes: $128\times 128$, $256\times 256$, and $512\times 512$, in both serial and parallel.
+Note that each processor receives information from only those adjacent to it; that is, the top left processor in the graphic does not communicate directly with the bottom right processor in the graphic. Rather, information is passed only along shared boundary points to propagate the wave equation. We run this code for two different grid sizes: $256\times 256$ and $512\times 512$, in both serial and parallel.
 
 In serial, we have:
 
 \begin{center}
 \begin{tabular}{|c|c|} \hline
 ($N_x, N_y$) & Time (seconds)\\ \hline
-(128, 128) & 0.987\\ \hline
+%(128, 128) & 0.987\\ \hline
 (256, 256) & 7.889\\ \hline %real
 (512, 512) & 63.913\\ \hline %real
 \end{tabular}
@@ -516,19 +520,19 @@ In parallel, we have:
 
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|} \hline
-($N_x, N_y$) & $P_x$ & $P_y$ & Time (sec) \\ \hline
-(128, 128) & 2 & 2 & (still queued on Odyssey)\\ \hline
-(128, 128) & 4 & 2 & 2.31 \\ \hline
-(128, 128) & 4 & 4 & (still queued on Odyssey) \\ \hline
-(128, 128) & 8 & 8 & (still queued on Odyssey) \\ \hline
-(256, 256) & 2 & 2 & 2.57 \\ \hline %real
-(256, 256) & 4 & 2 & 11.32 \\ \hline
-(256, 256) & 4 & 4 & 13.65 \\ \hline
-(256, 256) & 8 & 8 & 17.44 \\ \hline
-(512, 512) & 2 & 2 & (still queued on Odyssey)\\ \hline
-(512, 512) & 4 & 2 & (still queued on Odyssey)\\ \hline
-(512, 512) & 4 & 4 & (still queued on Odyssey)\\ \hline %check
-(512, 512) & 8 & 8 & (still queued on Odyssey) \\ \hline %check
+($N_x, N_y$) & $P_x$ & $P_y$ & Time (sec) & Speedup \\ \hline
+%(128, 128) & 2 & 2 & (still queued on Odyssey) & \\ \hline
+%(128, 128) & 4 & 2 & (still queued on Odyssey) & \\ \hline %check
+%(128, 128) & 4 & 4 & (still queued on Odyssey) & \\ \hline
+%(128, 128) & 8 & 8 & (still queued on Odyssey) & \\ \hline
+(256, 256) & 2 & 2 & 2.57 & 3.07\\ \hline %real
+(256, 256) & 4 & 2 & 11.32 & \\ \hline %check
+(256, 256) & 4 & 4 & 13.65 & \\ \hline %check
+(256, 256) & 8 & 8 & 17.44 & \\ \hline %check
+(512, 512) & 2 & 2 & 39.65 & 1.61\\ \hline %real
+(512, 512) & 4 & 2 & (still queued on Odyssey)& \\ \hline
+(512, 512) & 4 & 4 & (still queued on Odyssey)&\\ \hline %check
+(512, 512) & 8 & 8 & (still queued on Odyssey)&\\ \hline %check
 \end{tabular}
 \end{center}
 
