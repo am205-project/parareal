@@ -154,18 +154,18 @@ S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 \section{Methodology}
 
-The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is
-a generalized algorithm which allows for parallelization in time. It does so
-by using a cheaper ($g_{\Delta t}$)---a lower order or lesser resolution
-approximation first, which it then corrects by evaluating segments with a finer
-method $g_{\textnormal{fine}}$. The correction step from the approximation can
-be done in parallel. Multiple iterations can be performed to achieve an error
-provably asymptotically equal to a full serial computation of
-$g_{\textnormal{fine}}$. The exact number of iterations required to achieve
-certain levels of convergence depends on the problem and must be tuned top
-optimize for speedup for a given system. In summary, the algorithm is $k$
-repetitions of a correction process which requires running updated by a finer
-method run in parallel for subsections.
+The parareal algorithm, developed by Lions, Maday and Turinici in 2001
+\cite{lions2001parareal}, is a generalized algorithm which allows for
+parallelization in time. It does so by using a cheaper ($g_{\Delta t}$)---a
+lower order or lesser resolution approximation first, which it then corrects by
+evaluating segments with a finer method $g_{\textnormal{fine}}$. The correction
+step from the approximation can be done in parallel. Multiple iterations can be
+performed to achieve an error provably asymptotically equal to a full serial
+computation of $g_{\textnormal{fine}}$. The exact number of iterations required
+to achieve certain levels of convergence depends on the problem and must be
+tuned top optimize for speedup for a given system. In summary, the algorithm is
+$k$ repetitions of a correction process which requires running updated by a
+finer method run in parallel for subsections.
 
 The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
 
@@ -507,12 +507,10 @@ the difference in the coarse and fine methods (be it lower and higher order or a
 higher and lower resolution for the same method). The tradeoffs that must be
 computed and optimized for would be problem specific.
 
-\section{References}
+\bibliographystyle{unsrt}
+\bibliography{paper}
 
 Bibtex Citations for the Slides, and for \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
-
-%\bibliographystyle{unsrt}
-%\bibliography{poster/sample}
 
 Guilliame Bal paper
 
