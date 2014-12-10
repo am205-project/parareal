@@ -177,11 +177,9 @@ parareal could potentially take longer than the direct serial computation.
 
 \subsection{Parallel Tradeoff Analysis}
 
-ashi TODO
+We look to compute a theoretical maximum speedup enabled by the nature of the Parareal algorithm.  As this is a tradeoff between error (with parameter k being the number of iterations of corrections, each which takes another cycle of $g_{\Delta t}$, we seek to express the tradeoff as a function of the quality factor, $Q$, the number of iterations, $k$ and the number of processors $n$.  Our quality factor is defined as the multiplicative factor of additional time necessary to 
 
-Let's say the coarse operator runs in time $t$, and the fine operator runs in
-time $Q \cdot t$. Assume we have $N$ processors and we perform $k$ correction
-steps. Then, the runtime of Parareal is, assuming negligible setup and
+Then, the runtime of Parareal is, assuming negligible setup and
 aggregation time,
 
 \begin{equation}
@@ -201,6 +199,11 @@ systems. Because there were so many different versions and parameteres for the p
 
 \section{Results and Discussion}
 
+\subsection{Expectations}
+TODO WESLEY
+\subsection{General Remarks about Resuts}
+One of the TODO WESEY
+
 \subsection{Comparison to Serial with $g_{fine}$ as a Forward Euler with
 Smaller $\Delta t$}
 
@@ -219,7 +222,7 @@ y''(t) + 2y'(t) + 5y(t) = 0, \, y(0) = 1 \, y'(0) = 0.
 We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
 
 Varying Iterations:
-
+]
 Varying Quality Factor:
 We define the quality factor in this case for how many times smaller the Euler method used for $g_{fine}$ is compared to the Euler method used for $g_{\Delta t}$
 
@@ -265,7 +268,9 @@ bksim TODO GET DATA, AS REQUIRED FROM ABOVE, SHOW GRAPHS
 
 \subsection{Parallelism Paradigm Comparisons}
 
-Now with 3 different parallel implementations, two in time wiht the parareal, one in space,  we compare across TODO WESLSEY
+Now with 3 different parallel implementations, two in time with the parareal, one in space, we compare across the methods to see if we can make any statements about general performance of our different paradigms.
+
+TODO WESLEY
 
 TODO compare the computation times (and perhaps a slight change in accuracy of the results) between both parareal methods the best in the sections before hand
 

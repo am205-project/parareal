@@ -9,14 +9,16 @@
 \BOOKMARK [2][-]{subsection.2.5}{Parallel Tradeoff Analysis}{section.2}% 9
 \BOOKMARK [2][-]{subsection.2.6}{Explored Tests}{section.2}% 10
 \BOOKMARK [1][-]{section.3}{Results and Discussion}{}% 11
-\BOOKMARK [2][-]{subsection.3.1}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 12
-\BOOKMARK [2][-]{subsection.3.2}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 13
-\BOOKMARK [2][-]{subsection.3.3}{Parallelism by Space Paradigm}{section.3}% 14
-\BOOKMARK [2][-]{subsection.3.4}{Parallelism Paradigm Comparisons}{section.3}% 15
-\BOOKMARK [2][-]{subsection.3.5}{Comparison to C++ Implementations}{section.3}% 16
-\BOOKMARK [2][-]{subsection.3.6}{Summary of Performance}{section.3}% 17
-\BOOKMARK [2][-]{subsection.3.7}{Strong and Weak Scaling Analysis}{section.3}% 18
-\BOOKMARK [2][-]{subsection.3.8}{Demonstrating Scaling}{section.3}% 19
-\BOOKMARK [2][-]{subsection.3.9}{Possible Optimizations}{section.3}% 20
-\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 21
-\BOOKMARK [1][-]{section.5}{References}{}% 22
+\BOOKMARK [2][-]{subsection.3.1}{Expectations}{section.3}% 12
+\BOOKMARK [2][-]{subsection.3.2}{General Remarks about Resuts}{section.3}% 13
+\BOOKMARK [2][-]{subsection.3.3}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 14
+\BOOKMARK [2][-]{subsection.3.4}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 15
+\BOOKMARK [2][-]{subsection.3.5}{Parallelism by Space Paradigm}{section.3}% 16
+\BOOKMARK [2][-]{subsection.3.6}{Parallelism Paradigm Comparisons}{section.3}% 17
+\BOOKMARK [2][-]{subsection.3.7}{Comparison to C++ Implementations}{section.3}% 18
+\BOOKMARK [2][-]{subsection.3.8}{Summary of Performance}{section.3}% 19
+\BOOKMARK [2][-]{subsection.3.9}{Strong and Weak Scaling Analysis}{section.3}% 20
+\BOOKMARK [2][-]{subsection.3.10}{Demonstrating Scaling}{section.3}% 21
+\BOOKMARK [2][-]{subsection.3.11}{Possible Optimizations}{section.3}% 22
+\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 23
+\BOOKMARK [1][-]{section.5}{References}{}% 24
