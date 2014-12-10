@@ -92,7 +92,7 @@ def parallel_corrections(deriv, upast, tmin, tmax, numSteps, qualityFactor,
 
     # values for the fine computations
     dt = float(tmax - tmin) / (numSteps - 1)
-    fineNumSteps = numSteps*qualityFactor
+    fineNumSteps = numSteps * qualityFactor
     fineDt = dt / qualityFactor
 
     # broadcast upast
