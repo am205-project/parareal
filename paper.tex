@@ -172,7 +172,7 @@ tuned top optimize for speedup for a given system. In summary, the algorithm is
 $k$ repetitions of a correction process which requires running updated by a
 finer method run in parallel for subsections.
 
-The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
+The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different ``n-order method step'' function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
 
 \subsection{Parareal Algorithm and Visualization}
 
@@ -214,7 +214,7 @@ $g_{\textnormal{fine}} \to g$.
 
 \textbf{Theorem}: The order of accuracy of the Parareal method with coarse
 solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. We can prove
-this using induction \cite{bal2005convergence}. 
+this using induction~\cite{bal2005convergence}. 
 
 \emph{Proof}: By induction. 
 
@@ -267,8 +267,6 @@ g_{\textnormal{fine}}(t_n, u_n^k) - g_{\Delta t}(t_n, u_n^k)\big). \]
 
 As $k \to N$, the Parareal algorithm gives $u_{n}^{k+1} = u^k_n$, so the order
 of accuracy approaches that of $g_{\textnormal{fine}}$. 
-
-% I don't understand the above part ~ Andy 
 
 \subsection{Stability of the Parareal}
 
@@ -335,7 +333,7 @@ For the parallelism by space, we are dividing our grid on which we which to solv
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $gamma$ explained in the below table.
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$ explained in the below table.
 
 \begin{table}
 \centering
@@ -489,9 +487,56 @@ IDEALLY WE SHOW THE SAME GRAPHS AS THE ABOVE WITH ALL THE VARIATIONS TESTED
 
 \subsection{Parallelism by Space Paradigm}
 
-For the speaker problem, we designed a problem-specific method to parallelize in space and divide Pierce Hall into subsections such that each processor would receive a division of the building to compute. We wish to show strong scaling, in which the computation time of our parallel method will decrease as we increase the number of processors. We compare this version to the serial version we did for Homework 4.
+To demonstrate parallelism by space, we solve the two-dimensional wave equation by partioning a two-dimensional space domain amongst multiple processors. Specifically, we look to numerically solve
 
-bksim TODO GET DATA, AS REQUIRED FROM ABOVE, SHOW GRAPHS
+\begin{equation*}
+\frac{\partial^2 u}{\partial t^2} = \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}
+\end{equation*}
+
+on the two-dimensional domain $(x, y) \in [0,1]\times[0,1]$ for evolution in time. We partition the domain by space using a second order central difference approximation, assigning a rectangular portion of the two-dimensional domain to each of a grid of $(P_x, P_y)$ processors. This requires the passing of information along the edges of the processors to each other, as shown graphically in the figure below:
+
+\begin{figure}[H]
+\begin{center}
+\includegraphics[width=0.5\linewidth]{decomp.png}
+\caption{Parallelization by space schematic.}
+\label{fig:spaceparallel}
+\end{center}
+\end{figure}
+
+Note that each processor receives information from only those adjacent to it; that is, the top left processor in the graphic does not communicate directly with the bottom right processor in the graphic. Rather, information is passed only along shared boundary points to propagate the wave equation. We run this code for three different grid sizes: $128\times 128$, $256\times 256$, and $512\times 512$, in both serial and parallel.
+
+In serial, we have:
+
+\begin{center}
+\begin{tabular}{|c|c|} \hline
+($N_x, N_y$) & Time (seconds)\\ \hline
+(128, 128) & 0.987\\ \hline
+(256, 256) & 7.889\\ \hline %real
+(512, 512) & 63.913\\ \hline %real
+\end{tabular}
+\end{center}
+
+In parallel, we have:
+
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|} \hline
+($N_x, N_y$) & $P_x$ & $P_y$ & Time (sec) \\ \hline
+(128, 128) & 2 & 2 & (still queued on Odyssey)\\ \hline
+(128, 128) & 4 & 2 & 2.31 \\ \hline
+(128, 128) & 4 & 4 & (still queued on Odyssey) \\ \hline
+(128, 128) & 8 & 8 & (still queued on Odyssey) \\ \hline
+(256, 256) & 2 & 2 & 2.57 \\ \hline %real
+(256, 256) & 4 & 2 & 11.32 \\ \hline
+(256, 256) & 4 & 4 & 13.65 \\ \hline
+(256, 256) & 8 & 8 & 17.44 \\ \hline
+(512, 512) & 2 & 2 & (still queued on Odyssey)\\ \hline
+(512, 512) & 4 & 2 & (still queued on Odyssey)\\ \hline
+(512, 512) & 4 & 4 & (still queued on Odyssey)\\ \hline %check
+(512, 512) & 8 & 8 & (still queued on Odyssey) \\ \hline %check
+\end{tabular}
+\end{center}
+
+Note that as the workload assigned to each processing element stays constant and more processors are used to solve a larger problem, near-linear scaling is achieved. However, scaling is \textbf{not} achieved when we simply add more processing elements to try to solve the same-sized problem, as there is greater constant startup costs which do not necessarily improve the speed (or perhaps even decrease speed). Hence, this is an example of weak scaling. However, an advantage to this paradigm is that because each processor only communicates with its nearest neighbors, communication overhead is relatively constant regardless of how large problem size / number of processors used becomes. Therefore, such a paradigm should scale well to larger problem sizes or more fine grid spacings. 
 
 
 \subsection{Summary of Performance}
@@ -504,7 +549,7 @@ TODO team
 
 bsim TODO eventually
 
-As we can see, we do see the effects of strong scaling
+As we can see, we do see the effects of WEAK scaling
 
 TODO analyze
 
@@ -519,11 +564,11 @@ further explore the parareal algorithm would involve many test cases and to see
 how the parareal algorithm compares to other approaches---since the actual time
 and iterations necessary depend on the system of ODEs to solve.
 
+
 TODO NUMPY WRITE FATST HING
 
-On the other hand, parallelism by space already requires a very problem-specific
-design. The strong scaling efficiency of parallelism by space is high and is
-conceptually embarrassingly parallel and easier to create. However, the
+On the other hand, parallelism by space already requires a more problem-specific
+design. Parallelism by space is intuitive, and conceptually, is embarrassingly parallel and easier to create. However, the
 limitations are in the requirement for the code to be designed for the
 problem---how to divide by space so as to allow for the maximum number of even
 divisions. The lack of generality is not as beautiful as the parareal algorithm
