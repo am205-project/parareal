@@ -501,8 +501,8 @@ In serial, we have:
 \begin{tabular}{|c|c|} \hline
 ($N_x, N_y$) & Time (seconds)\\ \hline
 (128, 128) & 0.987\\ \hline
-(256, 256) & 7.889\\ \hline
-(512, 512) & 63.913\\ \hline
+(256, 256) & 7.889\\ \hline %real
+(512, 512) & 63.913\\ \hline %real
 \end{tabular}
 \end{center}
 
@@ -511,22 +511,22 @@ In parallel, we have:
 \begin{center}
 \begin{tabular}{|c|c|c|c|c|} \hline
 ($N_x, N_y$) & $P_x$ & $P_y$ & Time (sec) \\ \hline
-(128, 128) & 2 & 2 &  \\ \hline
+(128, 128) & 2 & 2 & (still queued on Odyssey)\\ \hline
 (128, 128) & 4 & 2 & 2.31 \\ \hline
-(128, 128) & 4 & 4 &  \\ \hline
-(128, 128) & 8 & 8 &  \\ \hline
-(256, 256) & 2 & 2 & 2.57 \\ \hline
+(128, 128) & 4 & 4 & (still queued on Odyssey) \\ \hline
+(128, 128) & 8 & 8 & (still queued on Odyssey) \\ \hline
+(256, 256) & 2 & 2 & 2.57 \\ \hline %real
 (256, 256) & 4 & 2 & 11.32 \\ \hline
 (256, 256) & 4 & 4 & 13.65 \\ \hline
 (256, 256) & 8 & 8 & 17.44 \\ \hline
-(512, 512) & 2 & 2 & \\ \hline
-(512, 512) & 4 & 2 &  \\ \hline
-(512, 512) & 4 & 4 &  \\ \hline
-(512, 512) & 8 & 8 &  \\ \hline
+(512, 512) & 2 & 2 & (still queued on Odyssey)\\ \hline
+(512, 512) & 4 & 2 & (still queued on Odyssey)\\ \hline
+(512, 512) & 4 & 4 & (still queued on Odyssey)\\ \hline %check
+(512, 512) & 8 & 8 & (still queued on Odyssey) \\ \hline %check
 \end{tabular}
 \end{center}
 
-Note that as the workload assigned to each processing element stays constant and more processors are used to solve a larger problem, linear scaling is achieved. However, scaling is \textbf{not} achieved when we simply add more processing elements to try to solve the same-sized problem, as there is greater constant startup costs which do not necessarily improve the speed (or perhaps even decrease speed). Hence, this is an example of weak scaling. However, an advantage to this paradigm is that because each processor only communicates with its nearest neighbors, communication overhead is relatively constant regardless of how large problem size / number of processors used becomes. Therefore, such a paradigm should scale well to larger problem sizes or more fine grid spacings. 
+Note that as the workload assigned to each processing element stays constant and more processors are used to solve a larger problem, near-linear scaling is achieved. However, scaling is \textbf{not} achieved when we simply add more processing elements to try to solve the same-sized problem, as there is greater constant startup costs which do not necessarily improve the speed (or perhaps even decrease speed). Hence, this is an example of weak scaling. However, an advantage to this paradigm is that because each processor only communicates with its nearest neighbors, communication overhead is relatively constant regardless of how large problem size / number of processors used becomes. Therefore, such a paradigm should scale well to larger problem sizes or more fine grid spacings. 
 
 \subsection{Parallelism Paradigm Comparisons}
 
