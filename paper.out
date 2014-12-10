@@ -4,31 +4,32 @@
 \BOOKMARK [3][-]{subsubsection.1.2.1}{Speedup}{subsection.1.2}% 4
 \BOOKMARK [3][-]{subsubsection.1.2.2}{Strong Scaling Efficiency}{subsection.1.2}% 5
 \BOOKMARK [3][-]{subsubsection.1.2.3}{Weak Scaling Efficiency}{subsection.1.2}% 6
-\BOOKMARK [1][-]{section.2}{Methodology}{}% 7
-\BOOKMARK [2][-]{subsection.2.1}{Visualization of Parareal Scheme}{section.2}% 8
-\BOOKMARK [2][-]{subsection.2.2}{Convergence of the Parareal}{section.2}% 9
-\BOOKMARK [2][-]{subsection.2.3}{Error of the Parareal}{section.2}% 10
-\BOOKMARK [2][-]{subsection.2.4}{Stability of the Parareal}{section.2}% 11
-\BOOKMARK [2][-]{subsection.2.5}{Parallel Tradeoff Analysis}{section.2}% 12
-\BOOKMARK [3][-]{subsubsection.2.5.1}{Parareal}{subsection.2.5}% 13
-\BOOKMARK [3][-]{subsubsection.2.5.2}{Parallel By Space}{subsection.2.5}% 14
-\BOOKMARK [2][-]{subsection.2.6}{Incorporating Communication}{section.2}% 15
-\BOOKMARK [3][-]{subsubsection.2.6.1}{Parareal}{subsection.2.6}% 16
-\BOOKMARK [3][-]{subsubsection.2.6.2}{Parallel By Space}{subsection.2.6}% 17
-\BOOKMARK [2][-]{subsection.2.7}{Amdahl's Law Analysis}{section.2}% 18
-\BOOKMARK [3][-]{subsubsection.2.7.1}{Parareal}{subsection.2.7}% 19
-\BOOKMARK [3][-]{subsubsection.2.7.2}{Parallel By Space}{subsection.2.7}% 20
-\BOOKMARK [2][-]{subsection.2.8}{Explored Tests}{section.2}% 21
-\BOOKMARK [1][-]{section.3}{Results and Discussion}{}% 22
-\BOOKMARK [2][-]{subsection.3.1}{Expectations}{section.3}% 23
-\BOOKMARK [2][-]{subsection.3.2}{General Remarks about Results}{section.3}% 24
-\BOOKMARK [2][-]{subsection.3.3}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 25
-\BOOKMARK [2][-]{subsection.3.4}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 26
-\BOOKMARK [2][-]{subsection.3.5}{Parallelism by Space Paradigm}{section.3}% 27
-\BOOKMARK [2][-]{subsection.3.6}{Parallelism Paradigm Comparisons}{section.3}% 28
-\BOOKMARK [2][-]{subsection.3.7}{Comparison to C++ Implementations}{section.3}% 29
-\BOOKMARK [2][-]{subsection.3.8}{Summary of Performance}{section.3}% 30
-\BOOKMARK [2][-]{subsection.3.9}{Demonstrating Scaling}{section.3}% 31
-\BOOKMARK [2][-]{subsection.3.10}{Possible Optimizations and Future Work}{section.3}% 32
-\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 33
-\BOOKMARK [1][-]{section.5}{References}{}% 34
+\BOOKMARK [2][-]{subsection.1.3}{Amdahl's Law}{section.1}% 7
+\BOOKMARK [1][-]{section.2}{Methodology}{}% 8
+\BOOKMARK [2][-]{subsection.2.1}{Parareal Algorithm and Visualization}{section.2}% 9
+\BOOKMARK [2][-]{subsection.2.2}{Convergence of the Parareal}{section.2}% 10
+\BOOKMARK [2][-]{subsection.2.3}{Error of the Parareal}{section.2}% 11
+\BOOKMARK [2][-]{subsection.2.4}{Stability of the Parareal}{section.2}% 12
+\BOOKMARK [2][-]{subsection.2.5}{Parallel Tradeoff Analysis}{section.2}% 13
+\BOOKMARK [3][-]{subsubsection.2.5.1}{Parareal}{subsection.2.5}% 14
+\BOOKMARK [3][-]{subsubsection.2.5.2}{Parallel By Space}{subsection.2.5}% 15
+\BOOKMARK [2][-]{subsection.2.6}{Incorporating Communication}{section.2}% 16
+\BOOKMARK [3][-]{subsubsection.2.6.1}{Parareal}{subsection.2.6}% 17
+\BOOKMARK [3][-]{subsubsection.2.6.2}{Parallel By Space}{subsection.2.6}% 18
+\BOOKMARK [2][-]{subsection.2.7}{Amdahl's Law Analysis}{section.2}% 19
+\BOOKMARK [3][-]{subsubsection.2.7.1}{Parareal}{subsection.2.7}% 20
+\BOOKMARK [3][-]{subsubsection.2.7.2}{Parallel By Space}{subsection.2.7}% 21
+\BOOKMARK [2][-]{subsection.2.8}{Explored Tests}{section.2}% 22
+\BOOKMARK [1][-]{section.3}{Results and Discussion}{}% 23
+\BOOKMARK [2][-]{subsection.3.1}{Expectations}{section.3}% 24
+\BOOKMARK [2][-]{subsection.3.2}{General Remarks about Results}{section.3}% 25
+\BOOKMARK [2][-]{subsection.3.3}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 26
+\BOOKMARK [2][-]{subsection.3.4}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 27
+\BOOKMARK [2][-]{subsection.3.5}{Parallelism by Space Paradigm}{section.3}% 28
+\BOOKMARK [2][-]{subsection.3.6}{Parallelism Paradigm Comparisons}{section.3}% 29
+\BOOKMARK [2][-]{subsection.3.7}{Comparison to C++ Implementations}{section.3}% 30
+\BOOKMARK [2][-]{subsection.3.8}{Summary of Performance}{section.3}% 31
+\BOOKMARK [2][-]{subsection.3.9}{Demonstrating Scaling}{section.3}% 32
+\BOOKMARK [2][-]{subsection.3.10}{Possible Optimizations and Future Work}{section.3}% 33
+\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 34
+\BOOKMARK [1][-]{section.5}{References}{}% 35
