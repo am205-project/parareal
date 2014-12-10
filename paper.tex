@@ -215,7 +215,7 @@ $g_{\textnormal{fine}}$, we can look at what happens to the error as $k \to N$
 
 For $k = 1, 2, \ldots$ we have 
 \[u_{n+1}^{k+1} = g_{\Delta t} (t_n, u_n^{k+1}) + \big(
-g_{\textnormal{fine}}(t_n, u_n^k) - g_{\Delta t}(t_n, u_n^k). \]
+g_{\textnormal{fine}}(t_n, u_n^k) - g_{\Delta t}(t_n, u_n^k)\big). \]
 
 As $k \to N$, the Parareal algorithm gives $u_{n}^{k+1} = u^k_n$, so the order
 of accuracy approaches that of $g_{\textnormal{fine}}$. 
@@ -227,9 +227,34 @@ of accuracy approaches that of $g_{\textnormal{fine}}$.
 With the Parareal method, it is possible to combine ODE solvers. The stability region depends on both $g_{\Delta t}$ and $g_{\textnormal{fine}}$, and the
 equation being solved. 
 
-FROM THE SLIDES 
+Let us consider the ODE $du/dt = \lambda u$. Let $g_{\textnormal{fine}}(t_n,
+u_n) = \bar{g_{\textnormal{fine}}}u_n$ and $g_{\Delta t}(t_n, u_n) =
+\bar{g_{\Delta t}} u_n$. As shown by Staff et al. [cite], the parareal method
+becomes
 
-ASHI carry?
+\[ u_n^k = \left( \sum_{j=0}^k {n \choose j} (\bar{g_{\textnormal{fine}}} -
+g_{\Delta t})^j \bar{g_{\Delta t}}^{n-j} \right) u_0 = H(\bar{g_{\Delta
+t}}, \bar{g_{\textnormal{fine}}}, n, k, \lambda)u_0 \]
+
+This is stable if $\textnormal{max}_{n, k} |H| \leq 1$. 
+
+When $\lambda \in \mathbb{R}$ and $\lambda \leq 0$, Staff et. al also show that
+
+\[
+    \begin{aligned}
+    |H| &\leq \sum_{j=0}^n {n \choose j} |\bar{g_{\textnormal{fine}}} -
+    g_{\Delta t}|^j |\bar{g_{\Delta t}}|^{n-j} \\
+    &= (|\bar{g_{\textnormal{fine}}} - g_{\Delta t}| + |\bar{g_{\Delta
+    t}}|)^n \leq 1
+    \end{aligned}
+\]
+
+To satisfy these conditions, we have that 
+\begin{enumerate}
+    \item $| \bar{g_{\textnormal{fine}}} | \leq 1$: This is the usual stability
+        requirement.
+    \item $|\bar{g_{\textnormal{fine}}} - 2 \bar{g_{\Delta t}}| \leq 1$.
+\end{enumerate}
 
 
 \subsection{Parallel Tradeoff Analysis}
@@ -285,10 +310,10 @@ operator was forward Euler, with $Q * 100$ steps, where $Q$ is the quality
 factor. We tested the Parareal algorithm on two sets of differential equations:
 
 \[
-y'(t) = f(t, y) = \lambda y, \, y(0) = 1
+y'(t) = f(t, y) = \lambda y, \, \, y(0) = 1
 \]
 \[
-y''(t) + 2y'(t) + 5y(t) = 0, \, y(0) = 1 \, y'(0) = 0.
+y''(t) + 2y'(t) + 5y(t) = 0, \, \, y(0) = 1, \, y'(0) = 0.
 \]
 
 We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
