@@ -113,7 +113,30 @@ time can offer.
 
 \subsection{Measuring Parallel Performance and Amdahl's Law}
 
-Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency. 
+Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency.
+
+\subsubsection{Speedup}
+
+Speedup, $S$ is defined simply as the ratio of the serial implementation to the parallelized version with a given number of processors.  These numbers are usually reported per number of processors that are tested:
+
+\begin{equation}
+S = \frac{T_\textnormal{serial}}{T_\textnormal{parallel}}
+\end{equation}
+
+\subsubsection{Strong Scaling Efficiency}
+
+Strong scaling 
+Programs that are difficult to parallelize will have efficiency expressions like $\frac{1}{\ln p}$ which approaches zero as the number of processors increases by a large amount.
+
+\begin{equation}
+\textnormal{Eff}_{\textnormal{strong}} = \frac{t_1}{N * t_N} * 100\%
+\end{equation}
+
+\subsubsection{Weak Scaling Efficiency}
+
+\begin{equation}
+\textnormal{Eff}_{\textnormal{weak}} = \frac{t_1}{t_N} * 100\%
+\end{equation}
 
 \section{Methodology}
 
@@ -130,7 +153,7 @@ optimize for speedup for a given system. In summary, the algorithm is $k$
 repetitions of a correction process which requires running updated by a finer
 method run in parallel for subsections.
 
-\begin{algorithm}[t]
+\begin{algorithm}
     \KwIn{Temporal discretization $t_n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
     \KwIn{Coarse scheme $g_{\Delta t}$}
     \KwIn{Finer scheme $g_{\textnormal{fine}}$}
@@ -146,10 +169,6 @@ method run in parallel for subsections.
 \end{algorithm}
 
 The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error. Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version. The exact optimum pairing is problem-specific and the code is written so that a different "n-order method step" function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
-
-\subsection{Visualization of Parareal Scheme}
-
-bksim TODO put a graph because maybe it'll help? the slides have a version
 
 \subsection{Convergence of the Parareal}
 
@@ -230,7 +249,7 @@ equation being solved.
 Let us consider the ODE $du/dt = \lambda u$. Let $g_{\textnormal{fine}}(t_n,
 u_n) = \bar{g_{\textnormal{fine}}}u_n$ and $g_{\Delta t}(t_n, u_n) =
 \bar{g_{\Delta t}} u_n$. As shown by Staff et al. [cite], the parareal method
-becomes
+becomes 
 
 \[ u_n^k = \left( \sum_{j=0}^k {n \choose j} (\bar{g_{\textnormal{fine}}} -
 g_{\Delta t})^j \bar{g_{\Delta t}}^{n-j} \right) u_0 = H(\bar{g_{\Delta
@@ -271,19 +290,23 @@ t + k \left(t + \frac{Qt}{N} \right).
 
 The first $t$ seconds comes from the first coarse approximation, without which the parareal algorithm degenerates to $g_{\Delta t}$.  Then for each of the $k$ correction iterations, the $t$ term comes from $n$, element by element evaluations of  $g_{\Delta t}$ followed by a parallel $\frac{1}{N}$ evaluation of $g_{\textnormal{fine}}$. In order for there to be a speedup relative to the fine operator, we can rearrange to get:
 
-\begin{equation}
+\[
 \begin{aligned}
 t + k\left( t + \frac{Qt}{N} \right) &< Qt \\
 k &< \frac{Q - 1}{1 + Q/N} \\
 N &> \frac{Qk}{Q - 1 - k} \\
 \end{aligned}
-\end{equation}
+\]
 
 This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, $k$, is important for error convergence to that of $g_{\textnormal{fine}}$.  However, finding the optimal $k$ is a problem-specific parameter and traded off for the desired accepted error.
 
 \subsubsection{Parallel By Space}
 
+For the parallelism by space, we are dividing our grid on which we which to solve our wave diffusion equation.  
+
 \subsection{Incorporating Communication}
+
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $gamma$
 
 \subsubsection{Parareal}
 
@@ -293,7 +316,15 @@ This can be tuned with by either adjusting the the quality factor or reducing th
 
 \subsubsection{Parareal}
 
+The Parareal method TODO does this scale well?
+
 \subsubsection{Parallel By Space}
+
+Because this task is embarassingly parallel and nearly 100% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of
+
+\[
+est
+\]
 
 \subsection{Explored Tests}
 
