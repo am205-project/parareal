@@ -1,5 +1,5 @@
-%ssssFile: paper.tex
-%ss Created: Sat Dec 06 04:00 PM 2014 E
+%File: paper.tex
+%Created: Sat Dec 06 04:00 PM 2014 E
 %
 \documentclass[letterpaper,12pt]{article}
 % Change the header if you're going to change this.
@@ -72,9 +72,9 @@ steps including ports of to C++ using BLAS. Our code is written in python using 
 
 \clearpage
 
-\tableofcontents
+%\tableofcontents
 
-\clearpage
+%\clearpage
 
 \section{Background}
 
@@ -111,24 +111,34 @@ will often lead to greater speedups because there is no serial component. The ma
 general stability and theoretical proofs (of error and convergence) that schemes which parallelize in
 time can offer.
 
-\subsection{Measuring Parallel Performance}
+\subsection{Measuring Parallel Performance and Amdahl's Law}
+
+Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency. 
 
 \section{Methodology}
 
 The parareal algorithm, developed by Lions, Maday and Turinici in 2001, CITE is
-a generalalized algorithm which allows for parallelization in time. It does so by using a
-cheaper ($g_{\Delta t}$)---lower order or lesser resolution, approximation first which it then corrects by evaluating segments with a finer method ($g_{\textnormal{fine}}$). The correction step from the approximation can be done in parallel. Multiple iterations can be performed to achieve an error provably asymptotically equal to a full serial computation of $g_{\textnormal{fine}}$. The exact number of iterations required to achieve certain levels of convergence depends on the problem and must be tuned top optimize for speedup for a given system. In summary, the algorithm is $k$ repetitions of a
-correction process which requires running updated by a finer method run in parallel for subsections.
+a generalized algorithm which allows for parallelization in time. It does so
+by using a cheaper ($g_{\Delta t}$)---a lower order or lesser resolution
+approximation first, which it then corrects by evaluating segments with a finer
+method $g_{\textnormal{fine}}$. The correction step from the approximation can
+be done in parallel. Multiple iterations can be performed to achieve an error
+provably asymptotically equal to a full serial computation of
+$g_{\textnormal{fine}}$. The exact number of iterations required to achieve
+certain levels of convergence depends on the problem and must be tuned top
+optimize for speedup for a given system. In summary, the algorithm is $k$
+repetitions of a correction process which requires running updated by a finer
+method run in parallel for subsections.
 
 \begin{algorithm}[t]
     \KwIn{Temporal discretization $t_n = t_0 + n \Delta t, \, n = 1,2,\ldots,N$}
     \KwIn{Coarse scheme $g_{\Delta t}$}
-    \KwIn{Finersscheme $g_{\textnormal{fine}}$}
+    \KwIn{Finer scheme $g_{\textnormal{fine}}$}
     Compute $u^1_{n+1} = g_{\Delta t}(t_n, u^1_n)$\;
-    Compute the corrections $\delta g_n(u^1_n) = g_{\textnormal{fine}}(t_n,
+    Compute the corrections $\delta g(u^1_n) = g_{\textnormal{fine}}(t_n,
     u^1_n) - g_{\Delta t}(t_n, u^1_n)$ in parallel\;
     Add the prediction and correction terms as $u^2_{n+1} = g_{\Delta t}(t_n,
-    u^2_n) + \delta g_n(u^1_n)$\;
+    u^2_n) + \delta g(u^1_n)$\;
     Repeat steps 2 and 3, incrementing the iteration label and using $u^{k+1}_0
     = u^1_0$ as the initial condition\;
  \caption{Parareal}
@@ -141,39 +151,111 @@ The beauty of the parareal method is that it can be adapted into many different 
 
 bksim TODO put a graph because maybe it'll help? the slides have a version
 
+\subsection{Convergence of the Parareal}
+
+Assume the coarse operator $g_{\Delta t}$ is Lipschitz and order $m$: for some
+constant $L$, 
+\[ |g_{\Delta t}(t_n, u) - g_{\Delta t}(t_n, v)| \leq (1 + L \Delta t) |u - v|
+\, \forall t \in (0, t_n), \]
+\[ |u(t_n) - u^1_N | \leq C(\Delta t)^m |u_0|. \]
+
+Additionally, assume the function $u$ is bounded on $(0, t_n)$. Furthermore,
+assume the fine solution operator $g_{\textnormal{fine}}$ is a sufficiently
+accurate approximation to the analytic operator so we may replace
+$g_{\textnormal{fine}} \to g$. 
+
+\textbf{Theorem}: The order of accuracy of the Parareal method with coarse
+solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. We can prove
+this using induction [Bal]. 
+
+\emph{Proof}: By induction. 
+
+Case $k = 1$: This is just the coarse operator, which is order $m$. 
+
+Assume that this is true for $k$, that $|u(t_N) - u^k_N| \leq C(\Delta t)^{mk}
+|u_0|$. 
+
+For the case $k + 1$, we have
+\[
+\begin{aligned}
+    |u(t_N) - u^{k+1}_N| &= 
+    |g(u(t_{N-1})) - g_{\Delta t}(u^{k+1}_{N-1}) - \delta g(u^k_{N-1})| \\
+    &= |g_{\Delta t}(u(t_{N-1})) - g_{\Delta t}(u^{k+1}_{N-1}) - \delta
+    g(u^k_{N-1}) + \delta g(u(t_{N-1}))| \\
+    &\leq |g_{\Delta t}(u(t_{N-1})) - g_{\Delta t}(u^{k+1}_{N-1})| - |\delta
+    g(u^k_{N-1}) + \delta g(u(t_{N-1}))| \\
+    &\leq (1 + C \Delta t) |u(t_{N-1} - u_{N-1}^{k+1}| + C(\Delta t)^{m+1} |
+    u_{N-1}^k - u(t_{N-1}) | \\
+    &\leq (1 + C \Delta t) |u(t_{N-1}) - u_{N-1}^{k+1}| + C(\Delta t)^{m(k+1)+1}
+    | u_0 | \\
+\end{aligned}
+\]
+
+We can continue to expand $|u(t_{N-1} - u_{N-1}^{k+1}|$ and get time indices of
+$N-1, N-2, \ldots, 2, 1$. This implies that 
+\[ |u(t_N) - u^{k+1}_N| \leq C(\Delta t)^{m(k+1)} |u_0|, \]
+as desired. 
+
+\subsection{Error of the Parareal}
+
+With the assumptions of the previous section, this parareal method will
+approach, with large enough $k$ (correction iterations) to approach the error of
+the fine method. However, there is a time vs. accuracy tradeoff. Let $Q$ be the
+\emph{Quality Factor} for $g_{\Delta t}$ and $g_{\textnormal{fine}}$. Suppose
+that, for constant number of processors and $\Delta t$, $g_{\Delta t}$ runs in
+time $T$. Then, $g_{\textnormal{fine}}$ runs in time $QT$. With too large of a
+$k$ and a lower $Q$, the time for the Parareal could potentially take longer
+than the direct serial computation. We note that there could be other
+relationships between the time of the coarse and fine schemes other than
+multiplication by a constant term. 
+
+Disregarding the time relationship between $g_{\Delta t}$ and
+$g_{\textnormal{fine}}$, we can look at what happens to the error as $k \to N$
+(recall that $N$ is the total number of time points in the time discretization). 
+
+For $k = 1, 2, \ldots$ we have 
+\[u_{n+1}^{k+1} = g_{\Delta t} (t_n, u_n^{k+1}) + \big(
+g_{\textnormal{fine}}(t_n, u_n^k) - g_{\Delta t}(t_n, u_n^k)\big). \]
+
+As $k \to N$, the Parareal algorithm gives $u_{n}^{k+1} = u^k_n$, so the order
+of accuracy approaches that of $g_{\textnormal{fine}}$. 
+
+% I don't understand the above part ~ Andy 
+
 \subsection{Stability of the Parareal}
 
 With the Parareal method, it is possible to combine ODE solvers. The stability region depends on both $g_{\Delta t}$ and $g_{\textnormal{fine}}$, and the
 equation being solved. 
 
-FROM THE SLIDES 
+Let us consider the ODE $du/dt = \lambda u$. Let $g_{\textnormal{fine}}(t_n,
+u_n) = \bar{g_{\textnormal{fine}}}u_n$ and $g_{\Delta t}(t_n, u_n) =
+\bar{g_{\Delta t}} u_n$. As shown by Staff et al. [cite], the parareal method
+becomes
 
-TODO BKSIM? ASHI carry?
+\[ u_n^k = \left( \sum_{j=0}^k {n \choose j} (\bar{g_{\textnormal{fine}}} -
+g_{\Delta t})^j \bar{g_{\Delta t}}^{n-j} \right) u_0 = H(\bar{g_{\Delta
+t}}, \bar{g_{\textnormal{fine}}}, n, k, \lambda)u_0 \]
 
-\subsection{Convergence of the Parareal}
+This is stable if $\textnormal{max}_{n, k} |H| \leq 1$. 
 
-TODO BKSIM
+When $\lambda \in \mathbb{R}$ and $\lambda \leq 0$, Staff et. al also show that
 
-Assume the coarse operator $g_{\Delta t}$ is order $m$ and is Lipshitz, and the
-fine solution operator $g_{\textnormal{fine}}$ is a sufficiently accurate
-approximation to the analytic operator so we may replace $g_{\textnormal{fine}}
-\to g$. 
+\[
+    \begin{aligned}
+    |H| &\leq \sum_{j=0}^n {n \choose j} |\bar{g_{\textnormal{fine}}} -
+    g_{\Delta t}|^j |\bar{g_{\Delta t}}|^{n-j} \\
+    &= (|\bar{g_{\textnormal{fine}}} - g_{\Delta t}| + |\bar{g_{\Delta
+    t}}|)^n \leq 1
+    \end{aligned}
+\]
 
-\emph{Theorem}: The order of accuracy of the Parareal method with coarse
-solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. Can be proved by
-induction. 
+To satisfy these conditions, we have that 
+\begin{enumerate}
+    \item $| \bar{g_{\textnormal{fine}}} | \leq 1$: This is the usual stability
+        requirement.
+    \item $|\bar{g_{\textnormal{fine}}} - 2 \bar{g_{\Delta t}}| \leq 1$.
+\end{enumerate}
 
-SHALL WE DO IT THEN?
-
-\subsection{Error of the Parareal}
-
-FROM THE SLIDES? + Adjust?
-TODO BKSIM? ASHI carry?
-
-Show that this parareal method will approach, with large enough $k$ (enough
-iterations) to approach the error of the fine method. However, with too large of
-a $k$ and a lower quality factor (ratio of fine to coarse), the time for the
-parareal could potentially take longer than the direct serial computation.
 
 \subsection{Parallel Tradeoff Analysis}
 
@@ -185,7 +267,7 @@ aggregation time,
 TODO WESLEY
 
 \begin{equation}
-t + k(t + \frac{Qt}{N}).
+t + k \left(t + \frac{Qt}{N} \right).
 \end{equation}
 
 The first t seconds comes from the first coarse approximation, without which the parareal algorithm degenerates to $g_{\Delta t}$,  In order for there to be a speedup relative to the fine operator, we require
@@ -210,14 +292,15 @@ TODO PARALLEL IN SPACE ANALYSIS
 
 We wished to explore certain tests that would span the space of possible
 parameters to the parareal as well as possible applications in different ODE
-systems. Because there were so many different versions and parameteres for the parareal to test,
+systems. Because there were so many different versions and parameters for the Parareal to test,
 
 \section{Results and Discussion}
 
 \subsection{Expectations}
 TODO WESLEY
-\subsection{General Remarks about Resuts}
-One of the TODO WESLEY
+
+\subsection{General Remarks about Results}
+LETS SEE IF I HAVE TO DISCLAIM ANY GLOBAL FAILURES IN OUR RESULTS
 
 \subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as a Forward Euler with
 Smaller $\Delta t$}
@@ -228,10 +311,10 @@ operator was forward Euler, with $Q * 100$ steps, where $Q$ is the quality
 factor. We tested the Parareal algorithm on two sets of differential equations:
 
 \[
-y'(t) = f(t, y) = \lambda y, \, y(0) = 1
+y'(t) = f(t, y) = \lambda y, \, \, y(0) = 1
 \]
 \[
-y''(t) + 2y'(t) + 5y(t) = 0, \, y(0) = 1 \, y'(0) = 0.
+y''(t) + 2y'(t) + 5y(t) = 0, \, \, y(0) = 1, \, y'(0) = 0.
 \]
 
 We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
@@ -246,27 +329,35 @@ Changing the ODE
 TODO ashi sort out the figure and match and replace if needbe
 
 \begin{figure}
+\begin{center}
 \includegraphics[width=0.75\textwidth]{data/runtime_vs_cpus.pdf}
 \caption{Running time vs. number of CPUs.}
 \label{fig:run_v_cpu}
+\end{center}
 \end{figure}
 
 \begin{figure}
+\begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_corrections.pdf}
 \caption{Error vs. number of correction steps.}
 \label{fig:err_v_k}
+\end{center}
 \end{figure}
 
 \begin{figure}
+\begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_qualityfactor.pdf}
 \caption{Error vs. quality factor of the fine operator}
 \label{fig:err_v_q}
+\end{center}
 \end{figure}
 
 \begin{figure}
+\begin{center}
 \includegraphics[width=0.75\linewidth]{data/runtime_vs_corrections.pdf}
 \caption{Running time as a function of the number of correction steps.}
 \label{fig:run_v_k}
+\end{center}
 \end{figure}
 
 \subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as Higher Order Methods}
@@ -345,5 +436,13 @@ computed and optimized for would be problem specific.
 \section{References}
 
 Bibtex Citations for the Slides, and for \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
+
+%\bibliographystyle{unsrt}
+%\bibliography{poster/sample}
+
+Guilliame Bal paper
+
+Stability of the Parareal Algorithm by Staff et al
+
 
 \end{document}
