@@ -310,6 +310,7 @@ Then, the runtime of Parareal is, assuming negligible overhead and ignoring comm
 
 \begin{equation}
 t + k \left(t + \frac{Qt}{N} \right).
+\label{eq:scheme}
 \end{equation}
 
 The first $t$ seconds comes from the first coarse approximation, without which the parareal algorithm degenerates to $g_{\Delta t}$.  Then for each of the $k$ correction iterations, the $t$ term comes from $n$, element by element evaluations of  $g_{\Delta t}$ followed by a parallel $\frac{1}{N}$ evaluation of $g_{\textnormal{fine}}$. In order for there to be a speedup relative to the fine operator, we can rearrange to get:
@@ -326,15 +327,32 @@ This can be tuned with by either adjusting the the quality factor or reducing th
 
 \subsubsection{Parallel By Space}
 
-For the parallelism by space, we are dividing our grid on which we which to solve our wave diffusion equation. This division is inherently parallelizable and allows us to follow a very similar approach in computing this as in the serial version - just divided in space, where the stencil approach is well-defined. 
+For the parallelism by space, we are dividing our grid on which we which to solve our wave diffusion equation. This division is inherently parallelizable and allows us to follow a very similar approach in computing this as in the serial version - just divided in space, where the stencil approach is well-defined. A fully parallelizable approach allows for $n$ times speedup and no computational tradeoffs if we ignore communication. As we are dividing our processors into a processor grid (dividing a 2D space into a 2D arrangement of processors) we are only limited by when the processor grid size approaches the problem size - upon which further processors would not receive any tasks since that would require a division by less than a unit of computation.
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $gamma$
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $gamma$ explained in the below table.
+
+\begin{table}
+\centering
+\begin{tabular}{|c|l|}
+{\bf Variable} & {\bf Description}\\
+\hline\hline
+$\alpha$ & Latency of communication. (sec)\\
+$\beta$ & Inverse communication bandwidth. (sec/byte)\\
+$\gamma$ & Inverse computational performance. (sec/flop)\\
+\hline
+\end{tabular}
+\caption{Table of Communication Architecture Parameters}
+\label{tab:notation}
+\end{table}
 
 \subsubsection{Parareal}
+TODO THIS IS CONFUSING Wesley
+
 
 \subsubsection{Parallel By Space}
+TODO THIS IS CONFUSING TOO Wesley
 
 \subsection{Amdahl's Law Analysis}
 
@@ -342,7 +360,19 @@ One of the main drawbacks of using Amdahl's Law as benchmarks in analysis is in 
 
 \subsubsection{Parareal}
 
-The Parareal method TODO does this scale well?
+We first try to express $B$ as function of the quality factor $Q$ and the number of correction steps of the parareal $k$.
+
+From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + K(t+ Qt)$.  Of this, the only parallelizable part is the kQt term.  Thus to find the expression of the parallelizable portion, we simplify:
+
+\[
+
+\]
+
+Now to replace this into Amdahl's Law, we have:
+
+\[
+S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
+\]
 
 \subsubsection{Parallel By Space}
 
@@ -354,16 +384,17 @@ S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 With embarassingly parallel problem setups, we can optimally achieve up to $n$ times speedup with $n$ processors though this number if quite ideal and will be very difficult to approach (large scaling will have different memory management and greater communication overheads and costs).
 
-\subsection{Explored Tests}
-
+\subsection{Planned Tests to Run}
 
 We wished to explore certain tests that would demonstrate the effects of changing various parameters be it from the solution schemes in the parareal to the exact system we were trying to solve.
 
 Due to the sheer number of things to explore, we usually try to compare each run to a benchmark we decided was most useful for comparison's sake and the list of parameters we wished to test are:
 
 \begin{itemize}
-\item
-\item
+\item General Scaling with Incrased $N$
+\item Adjusting $K$ in the Parareal
+\item Using Different Integration Schemes in Parareal for $g_{\textnormal{fine}}$
+\item Run the Solver on Various Complexities of ODEs
 \end{itemize}
 
 \section{Results and Discussion}
