@@ -15,6 +15,7 @@
 \usepackage{hyperref} % Can have actual links
 \usepackage{mathpazo}
 \usepackage[linesnumbered,vlined,ruled]{algorithm2e} % algorithm
+\usepackage{microtype}
 
 %Suggested by TeXworks
 \usepackage[utf8]{inputenc} % set input encoding (not needed with XeLaTeX)
@@ -114,7 +115,11 @@ time can offer.
 
 \subsection{Measuring Parallel Performance and Amdahl's Law}
 
-Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency.  Strong and weak scaling are common measures for the different ways a program can benefit from increased parallellism and more processors as well as the limitations that dictate the speedups. In each of the below subsections, $T(n)$ represents the computation of using $n$ processors and the same notation for speedup.
+Performance of parallel algorithms are usually measured in terms of 3 different
+metrics: speedup, strong scalling efficiency and weak scaling efficiency.
+Strong and weak scaling are common measures for the different ways a program can
+benefit from increased parallellism and more processors as well as the
+limitations that dictate the speedups~\cite{parallelscaling}. In each of the below subsections, $T(n)$ represents the computation of using $n$ processors and the same notation for speedup.
 
 \subsubsection{Speedup}
 
@@ -154,8 +159,8 @@ S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 \section{Methodology}
 
-The parareal algorithm, developed by Lions, Maday and Turinici in 2001
-\cite{lions2001parareal}, is a generalized algorithm which allows for
+The parareal algorithm, developed by Lions, Maday and Turinici in
+2001~\cite{lions2001parareal}, is a generalized algorithm which allows for
 parallelization in time. It does so by using a cheaper ($g_{\Delta t}$)---a
 lower order or lesser resolution approximation first, which it then corrects by
 evaluating segments with a finer method $g_{\textnormal{fine}}$. The correction
@@ -209,7 +214,7 @@ $g_{\textnormal{fine}} \to g$.
 
 \textbf{Theorem}: The order of accuracy of the Parareal method with coarse
 solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. We can prove
-this using induction [Bal]. 
+this using induction \cite{bal2005convergence}. 
 
 \emph{Proof}: By induction. 
 
@@ -272,8 +277,7 @@ equation being solved.
 
 Let us consider the ODE $du/dt = \lambda u$. Let $g_{\textnormal{fine}}(t_n,
 u_n) = \bar{g_{\textnormal{fine}}}u_n$ and $g_{\Delta t}(t_n, u_n) =
-\bar{g_{\Delta t}} u_n$. As shown by Staff et al. [cite], the parareal method
-becomes 
+\bar{g_{\Delta t}} u_n$. As shown by Staff et al. \cite{staff2005stability}, the parareal method becomes 
 
 \[ u_n^k = \left( \sum_{j=0}^k {n \choose j} (\bar{g_{\textnormal{fine}}} -
 g_{\Delta t})^j \bar{g_{\Delta t}}^{n-j} \right) u_0 = H(\bar{g_{\Delta
@@ -330,7 +334,7 @@ For the parallelism by space, we are dividing our grid on which we which to solv
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters---$\alpha$, $\beta$ and $\gamma$
 
 \subsubsection{Parareal}
 
@@ -394,7 +398,7 @@ y''(t) + 2y'(t) + 5y(t) = 0, \, \, y(0) = 1, \, y'(0) = 0.
 We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
 
 Varying Iterations:
-]
+
 Varying Quality Factor:
 We define the quality factor in this case for how many times smaller the Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method used for $g_{\Delta t}$
 
@@ -507,14 +511,10 @@ the difference in the coarse and fine methods (be it lower and higher order or a
 higher and lower resolution for the same method). The tradeoffs that must be
 computed and optimized for would be problem specific.
 
+\nocite{*}
 \bibliographystyle{unsrt}
 \bibliography{paper}
 
 Bibtex Citations for the Slides, and for \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
-
-Guilliame Bal paper
-
-Stability of the Parareal Algorithm by Staff et al
-
 
 \end{document}
