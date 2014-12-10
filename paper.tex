@@ -183,7 +183,7 @@ The beauty of the Parareal method is that it can be adapted into many different 
  \label{alg:parareal}
 \end{algorithm}
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{parareal_visualization.png}
 \caption{Graphical representation of the Parareal scheme.}
@@ -325,7 +325,7 @@ For the parallelism by space, we are dividing our grid on which we which to solv
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$ explained in the below table.
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters---$\alpha$, $\beta$ and $\gamma$ explained in the below table.
 
 \begin{table}
 \centering
@@ -409,7 +409,7 @@ We wished to explore certain tests that would demonstrate the effects of changin
 Due to the sheer number of things to explore, we usually try to compare each run to a benchmark we decided was most useful for comparison's sake and the list of parameters we wished to test are:
 
 \begin{itemize}
-\item General Scaling with Incrased $N$
+\item General Scaling with Increased $N$
 \item Adjusting $K$ in the Parareal
 \item Using Different Integration Schemes in Parareal for $g_{\textnormal{fine}}$
 \item Run the Solver on Various Complexities of ODEs
@@ -421,7 +421,17 @@ Due to the sheer number of things to explore, we usually try to compare each run
 We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations),
 
 \subsection{General Remarks about Results}
-LETS SEE IF I HAVE TO DISCLAIM ANY GLOBAL FAILURES IN OUR RESULTS
+
+In general, we were unable to see the promised theoretical speedups and error
+convergence for the Parareal algorithm. We believe this could be because of
+several factors. First, we may have some subtle bugs in our implementation of
+the Parareal algorithms. Additionally, we only tested our implementation on
+relatively simple problems.  he problem with this testing approach is that the
+fine serial computation of the solution $g_{\textnormal{fine}}$ is very cheap.
+We did not see the running time of the Parareal beat that for the serial
+implementation of $g_{\textnormal{fine}}$. If we tested our implementation for
+more expensive $g_{\textnormal{fine}}$ and more complicated problems, we might
+be able to see to see more speedup and better error convergence. 
 
 \subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as a Forward Euler
 with Smaller $\Delta t$}
@@ -446,7 +456,7 @@ We define the quality factor $Q$ in this case for how many times smaller the
 Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method
 used for $g_{\Delta t}$.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.75\textwidth]{data/runtime_vs_cpus.pdf}
 \caption{Running time vs. number of CPUs.}
@@ -461,7 +471,7 @@ decreases as more processors are added. However, there is a base time associated
 with setting up the parallel infrastructure, so asymptotically the running time
 is nonzero. 
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_corrections.pdf}
 \caption{Error vs. number of correction steps.}
@@ -469,7 +479,7 @@ is nonzero.
 \end{center}
 \end{figure}
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_qualityfactor.pdf}
 \caption{Error vs. quality factor of the fine operator}
@@ -483,7 +493,7 @@ number of correction steps and the quality factor. This is not exactly what we
 expect. We predicted that the error would decrease as we did more correction
 steps, or if we increased the quality of the $g_{\textnormal{fine}}$ operator. 
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/runtime_vs_corrections.pdf}
 \caption{Running time as a function of the number of correction steps.}
@@ -518,7 +528,7 @@ To demonstrate parallelism by space, we solve the two-dimensional wave equation 
 
 on the two-dimensional domain $(x, y) \in [0,1]\times[0,1]$ for evolution in time. We partition the domain by space using a second order central difference approximation, assigning a rectangular portion of the two-dimensional domain to each of a grid of $(P_x, P_y)$ processors. This requires the passing of information along the edges of the processors to each other, as shown graphically in the figure below:
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \begin{center}
 \includegraphics[width=0.5\linewidth]{decomp.png}
 \caption{Parallelization by space schematic.}
@@ -528,8 +538,6 @@ on the two-dimensional domain $(x, y) \in [0,1]\times[0,1]$ for evolution in tim
 
 Note that each processor receives information from only those adjacent to it; that is, the top left processor in the graphic does not communicate directly with the bottom right processor in the graphic. Rather, information is passed only along shared boundary points to propagate the wave equation. We run this code for two different grid sizes: $256\times 256$ and $512\times 512$, in both serial and parallel.
 
-\subsection{Summary of Performance}
-\subsubsection{Parallel in Space Paradigm}
 In serial, we have:
 
 \begin{center}
@@ -561,8 +569,6 @@ In parallel, we have:
 \end{tabular}
 \end{center}
 
-\subsection{Demonstrating Scaling and Efficiency}
-\subsubsection{Parallel in Space Paradigm}
 Note that as the workload assigned to each processing element stays constant and more processors are used to solve a larger problem, near-linear scaling is achieved. However, scaling is \textbf{not} achieved for the 256$\times$ 256 grid when we simply add more processing elements to try to solve the same-sized problem, as there is greater constant startup costs which do not necessarily improve the speed (or perhaps even decrease speed). We do see scaling with approximately $50\%$ efficiency for the $512\times 512$ grid as we add more processors. From the results, as we go from the $256\times256$ grid to the $512\times 512$ grid, we quadruple the size of the problem; quadrupling the processors from $2\times 2$ to $4\times4$ yields a somewhat linear relationship. Hence, this is an example of weak scaling. An advantage to this paradigm is as follows: because each processor only communicates with its nearest neighbors, communication overhead is relatively constant regardless of how large problem size / number of processors used becomes. Therefore, such a paradigm should scale well to larger problem sizes or more fine grid spacings. 
 
 \subsection{Possible Optimizations and Future Work}
@@ -603,8 +609,5 @@ computed and optimized for would be problem specific.
 \nocite{*}
 \bibliographystyle{unsrt}
 \bibliography{paper}
-
-\section{Appendix}
-\subsection{Explanation of Code Files}
 
 \end{document}
