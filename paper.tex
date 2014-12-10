@@ -380,7 +380,7 @@ S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 \subsubsection{Parallel By Space}
 
-Because this task is embarassingly parallel and nearly 100% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of (with $B$ of 0):
+Because this task is embarassingly parallel and nearly 100\% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of (with $B$ of 0):
 
 \[
 S_{n} = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
@@ -428,14 +428,12 @@ y''(t) + 2y'(t) + 5y(t) = 0, \, \, y(0) = 1, \, y'(0) = 0.
 
 We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
 
-Varying Iterations:
+%Varying Iterations:
 
 Varying Quality Factor:
-We define the quality factor in this case for how many times smaller the Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method used for $g_{\Delta t}$
-
-Changing the ODE
-
-TODO ashi sort out the figure and match and replace if needbe
+We define the quality factor in this case for how many times smaller the Euler
+method used for $g_{\textnormal{fine}}$ is compared to the Euler method used for
+$g_{\Delta t}$.
 
 \begin{figure}
 \begin{center}
@@ -444,6 +442,9 @@ TODO ashi sort out the figure and match and replace if needbe
 \label{fig:run_v_cpu}
 \end{center}
 \end{figure}
+
+Figure~\ref{fig:run_v_cpu} shows the running time (wall clock) for the Parareal
+algorithm 
 
 \begin{figure}
 \begin{center}
