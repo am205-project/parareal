@@ -493,7 +493,7 @@ on the two-dimensional domain $(x, y) \in [0,1]\times[0,1]$ for evolution in tim
 \end{center}
 \end{figure}
 
-Note that each processor receives information from only those adjacent to it; that is, the top left processor in the graphic does not communicate directly with the bottom right processor in the graphic. Rather, information is passed only along shared boundary points to propagate the wave equation. We run this code for two different grid sizes, $128\times 128$ and $256\times 256$, as well as in serial.
+Note that each processor receives information from only those adjacent to it; that is, the top left processor in the graphic does not communicate directly with the bottom right processor in the graphic. Rather, information is passed only along shared boundary points to propagate the wave equation. We run this code for three different grid sizes: $128\times 128$, $256\times 256$, and $512\times 512$, in both serial and parallel.
 
 In serial, we have:
 
@@ -502,6 +502,7 @@ In serial, we have:
 ($N_x, N_y$) & Time (seconds)\\ \hline
 (128, 128) & 0.987\\ \hline
 (256, 256) & 7.889\\ \hline
+(512, 512) & 63.913\\ \hline
 \end{tabular}
 \end{center}
 
@@ -518,6 +519,10 @@ In parallel, we have:
 (256, 256) & 4 & 2 & 11.32 \\ \hline
 (256, 256) & 4 & 4 & 13.65 \\ \hline
 (256, 256) & 8 & 8 & 17.44 \\ \hline
+(512, 512) & 2 & 2 & \\ \hline
+(512, 512) & 4 & 2 &  \\ \hline
+(512, 512) & 4 & 4 &  \\ \hline
+(512, 512) & 8 & 8 &  \\ \hline
 \end{tabular}
 \end{center}
 
