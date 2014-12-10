@@ -24,9 +24,19 @@
 \BOOKMARK [2][-]{subsection.3.1}{Expectations}{section.3}% 24
 \BOOKMARK [2][-]{subsection.3.2}{General Remarks about Results}{section.3}% 25
 \BOOKMARK [2][-]{subsection.3.3}{Comparison to Serial with gfine as a Forward Euler with Smaller t}{section.3}% 26
+<<<<<<< HEAD
 \BOOKMARK [2][-]{subsection.3.4}{Parallelism by Space Paradigm}{section.3}% 27
 \BOOKMARK [2][-]{subsection.3.5}{Summary of Performance}{section.3}% 28
 \BOOKMARK [2][-]{subsection.3.6}{Demonstrating Scaling and Efficiency}{section.3}% 29
 \BOOKMARK [2][-]{subsection.3.7}{Parallel in Space}{section.3}% 30
 \BOOKMARK [2][-]{subsection.3.8}{Possible Optimizations and Future Work}{section.3}% 31
 \BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 32
+=======
+\BOOKMARK [2][-]{subsection.3.4}{Comparison to Serial with gfine as Higher Order Methods}{section.3}% 27
+\BOOKMARK [2][-]{subsection.3.5}{Parallelism by Space Paradigm}{section.3}% 28
+\BOOKMARK [2][-]{subsection.3.6}{Summary of Performance}{section.3}% 29
+\BOOKMARK [2][-]{subsection.3.7}{Demonstrating Scaling and Efficiency}{section.3}% 30
+\BOOKMARK [2][-]{subsection.3.8}{Parallel in Space}{section.3}% 31
+\BOOKMARK [2][-]{subsection.3.9}{Possible Optimizations and Future Work}{section.3}% 32
+\BOOKMARK [1][-]{section.4}{Conclusion and Future Work}{}% 33
+>>>>>>> origin/master
