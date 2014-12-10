@@ -114,11 +114,11 @@ time can offer.
 
 \subsection{Measuring Parallel Performance and Amdahl's Law}
 
-Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency.
+Performance of parallel algorithms are usually measured in terms of 3 different metrics: speedup, strong scalling efficiency and weak scaling efficiency.  Strong and weak scaling are common measures for the different ways a program can benefit from increased parallellism and more processors as well as the limitatios that dictate the speedups.
 
 \subsubsection{Speedup}
 
-Speedup, $S$ is defined simply as the ratio of the serial implementation to the parallelized version with a given number of processors.  These numbers are usually reported per number of processors that are tested:
+Speedup, $S$ is defined simply as the ratio of the serial implementation to the parallelized version with a given number of processors. These numbers are usually reported per number of processors that are tested:
 
 \begin{equation}
 S = \frac{T_\textnormal{serial}}{T_\textnormal{parallel}}
@@ -126,8 +126,8 @@ S = \frac{T_\textnormal{serial}}{T_\textnormal{parallel}}
 
 \subsubsection{Strong Scaling Efficiency}
 
-Strong scaling 
-Programs that are difficult to parallelize will have efficiency expressions like $\frac{1}{\ln p}$ which approaches zero as the number of processors increases by a large amount.
+Strong scaling is a way to measure performance of a given application depending on if it is CPU-bound. This means that 
+Programs that are difficult to parallelize will have efficiency expressions like $\frac{1}{\ln p}$ which approaches zero as the number of processors increases by a large amount. 
 
 \begin{equation}
 \textnormal{Eff}_{\textnormal{strong}} = \frac{t_1}{N * t_N} * 100\%
@@ -138,6 +138,10 @@ Programs that are difficult to parallelize will have efficiency expressions like
 \begin{equation}
 \textnormal{Eff}_{\textnormal{weak}} = \frac{t_1}{t_N} * 100\%
 \end{equation}
+
+\subsection{Amdahl's Law}
+
+The final principle when discussing parallel performance is the potential existence of an Amdahl speedup limit.  o7777777777
 
 \section{Methodology}
 
