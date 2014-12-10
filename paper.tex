@@ -6,11 +6,11 @@
  
 % Possible packages - uncomment to use
 \usepackage{amsmath} % Needed for math stuff
-%\usepackage{lastpage}sss% Finds last page
-\usepackage{amssymb} % Needed for some math symbols
-\usepackage{graphicx}% Needed for graphics
+%\usepackage{lastpage} % Finds last page
+\usepackage{amssymb}  % Needed for some math symbols
+\usepackage{graphicx} % Needed for graphics
 \usepackage[usenames,dvipsnames]{xcolor} % Needed for graphics and color
-%\usepackage{setspace}sss% Needed to set single/double spacing
+%\usepackage{setspace} % Needed to set single/double spacing
 \usepackage{float} % Better placement of figures & tables
 \usepackage{hyperref} % Can have actual links
 \usepackage{mathpazo}
@@ -23,15 +23,7 @@
  
 % Sets the page margins to 1 inch each side
 \usepackage[margin=1in]{geometry}
-% force pictures to go where you want
-\usepackage{float}
-
 \geometry{letterpaper}
-%\addtolength{\oddsidemargin}{-0.875in} 
-%\addtolength{\evensidemargin}{-0.875in} 
-%\addtolength{\textwidth}{1.75in} 
-%\addtolength{\topmargin}{-.875in} 
-%\addtolength{\textheight}{1.75in}
 
 \frenchspacing
 
@@ -191,7 +183,7 @@ The beauty of the parareal method is that it can be adapted into many different 
  \label{alg:parareal}
 \end{algorithm}
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{parareal_visualization.png}
 \caption{Graphical representation of the parareal scheme.}
@@ -382,15 +374,27 @@ S(n) &= \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 As written below, we have used $Q = 100$ with various $k$.
 
-When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of $S(n) = \frac{203n}{3n+200} \approx 67$
+When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of:
+\[
+\begin{aligned}
+S(n) &= \frac{203n}{3n+200} \\
+\lim_{n\to \infty}S(n) &\approx 67
+\end{aligned}
+\]
 
-When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of $S(n) = \frac{1011n}{11n+1000} \approx 91$
+When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of 
+\[
+\begin{aligned}
+S(n) &= \frac{1011n}{11n+1000} \\
+\lim_{n\to \infty}S(n) &\approx 91
+\end{aligned}
+\]
 
 It is important to note that this speedup is measured with respect to the parareal agorithm done in parallel. This does not compare the Parareal to doing $g_{\textnormal{fine}}$ but rather shows how given infinite processors, our speedup will approach certain asymptotic bounds. We do see however large constants in the denominator which means that we will get better speedup as we increase n past a certain size.
 
 \subsubsection{Parallel By Space}
 
-Because this task is embarassingly parallel and nearly 100% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of (with $B$ of 0):
+Because this task is embarassingly parallel and nearly 100\% of the computation code can be parallelized (disregarding any uneven divisions of the space by the number of processors), we achieve the Amdahl's Law optimal speedup bound of (with $B$ of 0):
 
 \[
 S(n) = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
@@ -413,8 +417,6 @@ Due to the sheer number of things to explore, we usually try to compare each run
 
 \section{Results and Discussion}
 
-WESLEY ENDED HERE, BEFORE THIS IS WESLEY APPROVED
-
 \subsection{Expectations}
 We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations),
 
@@ -429,25 +431,22 @@ Our coarse operator was forward Euler step, with 100 steps, while the fine
 operator was forward Euler, with $Q \cdot 100$ steps, where $Q$ is the quality
 factor. We tested the Parareal algorithm on two sets of differential equations:
 
+Example 1:
 \[
 y'(t) = f(t, y) = \lambda y, \, \, y(0) = 1
 \]
+
+Example 2:
 \[
 y''(t) + 2y'(t) + 5y(t) = 0, \, \, y(0) = 1, \, y'(0) = 0.
 \]
 
-We ran the algorithm on different numbers of processors and varied $k$ and $Q$. 
+We ran the algorithm on different numbers of processors and varied $k$ and $Q$.
+We define the quality factor $Q$ in this case for how many times smaller the
+Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method
+used for $g_{\Delta t}$.
 
-Varying Iterations:
-
-Varying Quality Factor:
-We define the quality factor in this case for how many times smaller the Euler method used for $g_{\textnormal{fine}}$ is compared to the Euler method used for $g_{\Delta t}$
-
-Changing the ODE
-
-TODO ashi sort out the figure and match and replace if needbe
-
-\begin{figure}
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\textwidth]{data/runtime_vs_cpus.pdf}
 \caption{Running time vs. number of CPUs.}
@@ -455,7 +454,14 @@ TODO ashi sort out the figure and match and replace if needbe
 \end{center}
 \end{figure}
 
-\begin{figure}
+Figure~\ref{fig:run_v_cpu} shows the running time (wall clock) for the Parareal
+algorithm compared to different number of CPUs used. The serial version is the
+Euler method with $Q$ times as many steps. As we can see, the running time
+decreases as more processors are added. However, there is a base time associated
+with setting up the parallel infrastructure, so asymptotically the running time
+is nonzero. 
+
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_corrections.pdf}
 \caption{Error vs. number of correction steps.}
@@ -463,7 +469,7 @@ TODO ashi sort out the figure and match and replace if needbe
 \end{center}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_qualityfactor.pdf}
 \caption{Error vs. quality factor of the fine operator}
@@ -471,19 +477,13 @@ TODO ashi sort out the figure and match and replace if needbe
 \end{center}
 \end{figure}
 
-\begin{figure}
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/runtime_vs_corrections.pdf}
 \caption{Running time as a function of the number of correction steps.}
 \label{fig:run_v_k}
 \end{center}
 \end{figure}
-
-\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as Higher Order Methods}
-
-TODO team
-
-IDEALLY WE SHOW THE SAME GRAPHS AS THE ABOVE WITH ALL THE VARIATIONS TESTED
 
 \subsection{Parallelism by Space Paradigm}
 
