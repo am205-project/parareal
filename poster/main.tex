@@ -114,8 +114,8 @@ steps including ports of to C++ using BLAS. Our code is written in python using 
 \begin{block}{Algorithm}
 
 The Parareal algorithm, developed by Lions, Maday and Turinici in 2001, is
-a general algorithm that allows parallelization in time. It does so by using a
-cheaper (lower order or lesser resolution) approximation first, and then makes
+a general algorithm that allows parallelization in time. It does so by first using a
+cheaper (lower order or lesser resolution) approximation, and then makes
 corrections in parallel. The entire process is then iterative and tuned for a
 given amount of iterations. Therefore, the algorithm is $k$ repetitions of a
 serial coarse method updated by a finer method run in parallel for subsections.
@@ -195,6 +195,8 @@ approximation to the analytic operator so we may replace $g_{\textnormal{fine}}
 \emph{Theorem}: The order of accuracy of the Parareal method with coarse
 solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. Can be proved by
 induction. 
+
+SHALL WE DO IT THEN?
 
 \textbf{Stability}
 
