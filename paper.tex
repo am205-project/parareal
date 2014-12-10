@@ -382,9 +382,21 @@ S(n) &= \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \righ
 
 As written below, we have used $Q = 100$ with various $k$.
 
-When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of $S(n) = \frac{203n}{3n+200} \approx 67$
+When $k = 2$ and $Q = 100$, for maximal speedup (fewest iterations) of:
+\[
+\begin{aligned}
+S(n) &= \frac{203n}{3n+200} \\
+\lim_{n\to \infty}S(n) &\approx 67
+\end{aligned}
+\]
 
-When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of $S(n) = \frac{1011n}{11n+1000} \approx 91$
+When $k = 10$ and $Q = 100$, for more iterations and less error, we'd see an Amdahl bounded max speedup of 
+\[
+\begin{aligned}
+S(n) &= \frac{1011n}{11n+1000} \\
+\lim_{n\to \infty}S(n) &\approx 91
+\end{aligned}
+\]
 
 It is important to note that this speedup is measured with respect to the parareal agorithm done in parallel. This does not compare the Parareal to doing $g_{\textnormal{fine}}$ but rather shows how given infinite processors, our speedup will approach certain asymptotic bounds. We do see however large constants in the denominator which means that we will get better speedup as we increase n past a certain size.
 
@@ -412,8 +424,6 @@ Due to the sheer number of things to explore, we usually try to compare each run
 \end{itemize}
 
 \section{Results and Discussion}
-
-WESLEY ENDED HERE, BEFORE THIS IS WESLEY APPROVED
 
 \subsection{Expectations}
 We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations),
@@ -454,7 +464,7 @@ TODO ashi sort out the figure and match and replace if needbe
 \label{fig:run_v_cpu}
 \end{center}
 \end{figure}
-
+`
 \begin{figure}
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/error_vs_corrections.pdf}
@@ -478,12 +488,6 @@ TODO ashi sort out the figure and match and replace if needbe
 \label{fig:run_v_k}
 \end{center}
 \end{figure}
-
-\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as Higher Order Methods}
-
-TODO team
-
-IDEALLY WE SHOW THE SAME GRAPHS AS THE ABOVE WITH ALL THE VARIATIONS TESTED
 
 \subsection{Parallelism by Space Paradigm}
 
