@@ -85,8 +85,8 @@ depends on the previous values, say those at time $n-1$ and $n$. This setup
 does not allow for parallelism. The only way to incorporate parallelism is to
 create schemes that have parallelizable components---such as an update or a
 refinement built on top of a more basic method first computed in serial. As will be discussed and analyzed in the
-methodology section, one such scheme would be the parareal algorithm. As an
-overview, the parareal algorithm first does a coarse (low-order and fast)
+methodology section, one such scheme would be the Parareal algorithm. As an
+overview, the Parareal algorithm first does a coarse (low-order and fast)
 approximation, then seeks to iteratively correct using smaller, more refined
 numerical methods done in parallel from approximated starting points
 approximated by the coarse solution.
@@ -139,7 +139,7 @@ Weak scaling measures the memory-bound nature of the parallelized application. A
 
 \subsection{Amdahl's Law}
 
-The final principle when discussing parallel performance is the potential existence of an Amdahl speedup limit. Amdahl's Law seeks to describe the maximum parallel speedup in an overall piece of code when the problem is not embarassingly parallel --- not all of the system can be divided up in parallel. The parallel in time methods must always have some serial component due to the time-dependent nature of the ODE's which will fall under the limitations stated by Amdahl's Law.  His law expresses both best time given $n$ processors as well as the speedup for $n$ processors as a function of $B$, the fractional amount of the algorithm that cannot be parallelized---due to strict serial constraints:
+The final principle when discussing parallel performance is the potential existence of an Amdahl speedup limit. Amdahl's Law seeks to describe the maximum parallel speedup in an overall piece of code when the problem is not embarassingly parallel --- not all of the system can be divided up in parallel. The parallel in time methods must always have some serial component due to the time-dependent nature of the ODE's which will fall under the limitations stated by Amdahl's Law. His law expresses both best time given $n$ processors as well as the speedup for $n$ processors as a function of $B$, the fractional amount of the algorithm that cannot be parallelized---due to strict serial constraints:
 
 \begin{equation}
 T(n) = T(1) \left( B + \frac{1}{n} (1-B) \right)
@@ -151,7 +151,7 @@ S(n) = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right
 
 \section{Methodology}
 
-The parareal algorithm, developed by Lions, Maday and Turinici in
+The Parareal algorithm, developed by Lions, Maday and Turinici in
 2001~\cite{lions2001parareal}, is a generalized algorithm which allows for
 parallelization in time. It does so by using a cheaper ($g_{\Delta t}$)---a
 lower order or lesser resolution approximation first, which it then corrects by
@@ -164,7 +164,7 @@ tuned top optimize for speedup for a given system. In summary, the algorithm is
 $k$ repetitions of a correction process which requires running updated by a
 finer method run in parallel for subsections.
 
-The beauty of the parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error.  Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version.  The exact optimum pairing is problem-specific and the code is written so that a different ``n-order method step'' function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
+The beauty of the Parareal method is that it can be adapted into many different versions with different choices of the $g_{\Delta t}$ and $g_{\textnormal{fine}}$ solution operators. The $g_{\textnormal{fine}}$ solution is a more computationally expensive method but assumed to have lesser error. Most of the time this will be a higher order method, but can also be a greater sampling of the same order method used in the coarse version. The exact optimum pairing is problem-specific and the code is written so that a different ``n-order method step'' function could be written and then replaced into the code. We experiment with testing different pairs of $g_{\Delta t}$ and $g_{\textnormal{fine}}$ to see how influential the choice of solution scheme is.
 
 \subsection{Parareal Algorithm and Visualization}
 
@@ -186,7 +186,7 @@ The beauty of the parareal method is that it can be adapted into many different 
 \begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{parareal_visualization.png}
-\caption{Graphical representation of the parareal scheme.}
+\caption{Graphical representation of the Parareal scheme.}
 \label{fig:pararealvis}
 \end{center}
 \end{figure}
@@ -238,7 +238,7 @@ as desired.
 
 \subsection{Error of the Parareal}
 
-With the assumptions of the previous section, this parareal method will
+With the assumptions of the previous section, this Parareal method will
 approach, with large enough $k$ (correction iterations) to approach the error of
 the fine method. However, there is a time vs. accuracy tradeoff. Let $Q$ be the
 \emph{Quality Factor} for $g_{\Delta t}$ and $g_{\textnormal{fine}}$. Suppose
@@ -267,7 +267,7 @@ equation being solved.
 
 Let us consider the ODE $du/dt = \lambda u$. Let $g_{\textnormal{fine}}(t_n,
 u_n) = \bar{g_{\textnormal{fine}}}u_n$ and $g_{\Delta t}(t_n, u_n) =
-\bar{g_{\Delta t}} u_n$. As shown by Staff et al. \cite{staff2005stability}, the parareal method becomes 
+\bar{g_{\Delta t}} u_n$. As shown by Staff et al. \cite{staff2005stability}, the Parareal method becomes 
 
 \[ u_n^k = \left( \sum_{j=0}^k {n \choose j} (\bar{g_{\textnormal{fine}}} -
 g_{\Delta t})^j \bar{g_{\Delta t}}^{n-j} \right) u_0 = H(\bar{g_{\Delta
@@ -298,7 +298,7 @@ To satisfy these conditions, we have that
 
 \subsubsection{Parareal}
 
-We look to compute a theoretical maximum speedup enabled by the nature of the Parareal algorithm.  As this is a tradeoff between error (with parameter k being the number of iterations of corrections, each which takes another cycle of $g_{\Delta t}$, we seek to express the tradeoff as a function of the quality factor, $Q$, the number of iterations, $k$ and the number of processors $n$.  Our quality factor is defined as the multiplicative factor of additional time necessary to compute the solution using the $g_{\textnormal{fine}}$ scheme instead of the $g_{\Delta t}$ method.
+We look to compute a theoretical maximum speedup enabled by the nature of the Parareal algorithm. As this is a tradeoff between error (with parameter k being the number of iterations of corrections, each which takes another cycle of $g_{\Delta t}$, we seek to express the tradeoff as a function of the quality factor, $Q$, the number of iterations, $k$ and the number of processors $n$. Our quality factor is defined as the multiplicative factor of additional time necessary to compute the solution using the $g_{\textnormal{fine}}$ scheme instead of the $g_{\Delta t}$ method.
 
 Then, the runtime of Parareal is, assuming negligible overhead and ignoring communication bandwidth and letting $t$ be the time in seconds to compute the coarse $g_{\Delta t}$:
 
@@ -307,7 +307,7 @@ t + k \left(t + \frac{Qt}{N} \right).
 \label{eq:scheme}
 \end{equation}
 
-The first $t$ seconds comes from the first coarse approximation, without which the parareal algorithm degenerates to $g_{\Delta t}$.  Then for each of the $k$ correction iterations, the $t$ term comes from $n$, element by element evaluations of  $g_{\Delta t}$ followed by a parallel $\frac{1}{N}$ evaluation of $g_{\textnormal{fine}}$. In order for there to be a speedup relative to the fine operator, we can rearrange to get:
+The first $t$ seconds comes from the first coarse approximation, without which the Parareal algorithm degenerates to $g_{\Delta t}$. Then for each of the $k$ correction iterations, the $t$ term comes from $n$, element by element evaluations of $g_{\Delta t}$ followed by a parallel $\frac{1}{N}$ evaluation of $g_{\textnormal{fine}}$. In order for there to be a speedup relative to the fine operator, we can rearrange to get:
 
 \[
 \begin{aligned}
@@ -317,7 +317,7 @@ N &> \frac{Qk}{Q - 1 - k} \\
 \end{aligned}
 \]
 
-This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, $k$, is important for error convergence to that of $g_{\textnormal{fine}}$.  However, finding the optimal $k$ is a problem-specific parameter and traded off for the desired accepted error.
+This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, $k$, is important for error convergence to that of $g_{\textnormal{fine}}$. However, finding the optimal $k$ is a problem-specific parameter and traded off for the desired accepted error.
 
 \subsubsection{Parallel By Space}
 
@@ -350,13 +350,13 @@ TODO THIS IS CONFUSING TOO Wesley
 
 \subsection{Amdahl's Law Analysis}
 
-One of the main drawbacks of using Amdahl's Law as benchmarks in analysis is in the generally abstract way the paralleizable fraction is determined, the $B$ term.  The value of this is estimated based on an understanding of the algorithm from a high level and not derived from any underlying mathematical expressions.
+One of the main drawbacks of using Amdahl's Law as benchmarks in analysis is in the generally abstract way the paralleizable fraction is determined, the $B$ term. The value of this is estimated based on an understanding of the algorithm from a high level and not derived from any underlying mathematical expressions.
 
 \subsubsection{Parareal}
 
-We first try to express $B$ as function of the quality factor $Q$ and the number of correction steps of the parareal $k$.
+We first try to express $B$ as function of the quality factor $Q$ and the number of correction steps of the Parareal $k$.
 
-From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + k(t+ Qt)$.  Of this, the only parallelizable part is the $kQt$ term.  Thus to find the expression of the non-parallelizable portion, we simplify:
+From our analysis in equation~\ref{eq:scheme}, when we set $N$ to 1 for the generic setup, we see that our total computation is $t + k(t+ Qt)$. Of this, the only parallelizable part is the $kQt$ term. Thus to find the expression of the non-parallelizable portion, we simplify:
 
 \[
 B = \frac{t+kt}{t+kt+kQt} = \frac{1+k}{kQ+k+1}
@@ -390,7 +390,7 @@ S(n) &= \frac{1011n}{11n+1000} \\
 \end{aligned}
 \]
 
-It is important to note that this speedup is measured with respect to the parareal agorithm done in parallel. This does not compare the Parareal to doing $g_{\textnormal{fine}}$ but rather shows how given infinite processors, our speedup will approach certain asymptotic bounds. We do see however large constants in the denominator which means that we will get better speedup as we increase n past a certain size.
+It is important to note that this speedup is measured with respect to the Parareal algorithm done in parallel. This does not compare the Parareal to doing $g_{\textnormal{fine}}$ but rather shows how given infinite processors, our speedup will approach certain asymptotic bounds. We do see however large constants in the denominator which means that we will get better speedup as we increase n past a certain size.
 
 \subsubsection{Parallel By Space}
 
@@ -400,11 +400,11 @@ Because this task is embarassingly parallel and nearly 100\% of the computation 
 S(n) = \frac{T(1)}{T(n)} = \frac{T(1)}{ T(1) \left( B + \frac{1}{n} (1-B) \right)} = \frac{T(1)}{T(1) \left( 0 + \frac{1}{n} (1-0) \right)} = \frac{T(1)}{T(1) * \left( \frac{1}{n} \right) } = n
 \]
 
-With embarassingly parallel problem setups, we can optimally achieve up to $n$ times speedup with $n$ processors though this number if quite ideal and will be very difficult to approach (large scaling will have different memory management and greater communication overheads and costs).
+With embarrassingly parallel problem setups, we can optimally achieve up to $n$ times speedup with $n$ processors though this number if quite ideal and will be very difficult to approach (large scaling will have different memory management and greater communication overheads and costs).
 
 \subsection{Planned Tests to Run}
 
-We wished to explore certain tests that would demonstrate the effects of changing various parameters be it from the solution schemes in the parareal to the exact system we were trying to solve.
+We wished to explore certain tests that would demonstrate the effects of changing various parameters be it from the solution schemes in the Parareal to the exact system we were trying to solve.
 
 Due to the sheer number of things to explore, we usually try to compare each run to a benchmark we decided was most useful for comparison's sake and the list of parameters we wished to test are:
 
@@ -423,8 +423,8 @@ We hoped to show that under the properly tuned parameters (namely the $k$ number
 \subsection{General Remarks about Results}
 LETS SEE IF I HAVE TO DISCLAIM ANY GLOBAL FAILURES IN OUR RESULTS
 
-\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as a Forward Euler with
-Smaller $\Delta t$}
+\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as a Forward Euler
+with Smaller $\Delta t$}
 
 We implemented the Parareal algorithm in Python, using mpi4py to parallelize it.
 Our coarse operator was forward Euler step, with 100 steps, while the fine
@@ -477,6 +477,12 @@ is nonzero.
 \end{center}
 \end{figure}
 
+As seen in Figures~\ref{fig:err_v_k} and~\ref{fig:err_v_q}, the error remains
+constant for the parallel versions of the algorithm even as we increase the
+number of correction steps and the quality factor. This is not exactly what we
+expect. We predicted that the error would decrease as we did more correction
+steps, or if we increased the quality of the $g_{\textnormal{fine}}$ operator. 
+
 \begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.75\linewidth]{data/runtime_vs_corrections.pdf}
@@ -485,9 +491,26 @@ is nonzero.
 \end{center}
 \end{figure}
 
+Figure~\ref{fig:run_v_k} shows the running time (wall clock) as a function of
+the number of correction steps. For the parallel implementations, we see an
+increase in running time as we increase the number of correction steps. This is
+to be expected, since increasing the number of correction steps increases the
+number of iterations of our algorithm. Therefore, even though we proved before
+that as the number of iterations $k \to N$, where $N$ is the number of time
+points, the order of convergence of the algorithm converges to the order of
+accuracy of $g_{\textnormal{fine}}$, this comes at the expense of increasing
+computational cost. 
+
+\subsection{Comparison to Serial with $g_{\textnormal{fine}}$ as Higher Order
+Methods}
+
+We considered using a higher order $g_{\textnormal{fine}}$ in our
+implementation, but we were unable to show higher order convergence of the error
+when we tested our method serially. 
+
 \subsection{Parallelism by Space Paradigm}
 
-To demonstrate parallelism by space, we solve the two-dimensional wave equation by partioning a two-dimensional space domain amongst multiple processors. Specifically, we look to numerically solve
+To demonstrate parallelism by space, we solve the two-dimensional wave equation by partitioning a two-dimensional space domain amongst multiple processors. Specifically, we look to numerically solve
 
 \begin{equation*}
 \frac{\partial^2 u}{\partial t^2} = \frac{\partial^2 u}{\partial x^2} + \frac{\partial^2 u}{\partial y^2}
@@ -495,7 +518,7 @@ To demonstrate parallelism by space, we solve the two-dimensional wave equation 
 
 on the two-dimensional domain $(x, y) \in [0,1]\times[0,1]$ for evolution in time. We partition the domain by space using a second order central difference approximation, assigning a rectangular portion of the two-dimensional domain to each of a grid of $(P_x, P_y)$ processors. This requires the passing of information along the edges of the processors to each other, as shown graphically in the figure below:
 
-\begin{figure}[H]
+\begin{figure}[htb]
 \begin{center}
 \includegraphics[width=0.5\linewidth]{decomp.png}
 \caption{Parallelization by space schematic.}
@@ -560,8 +583,8 @@ optimization. We are trying to measure performance in Python, which is not the
 ideal benchmarking language for efficiency and speedups. A port over to C++
 using the MPI libraries in C++ rather than the mpi4py libraries in python would
 be ideal. Other optimizations mentioned above could also be implemented. To
-further explore the parareal algorithm would involve many test cases and to see
-how the parareal algorithm compares to other approaches---since the actual time
+further explore the Parareal algorithm would involve many test cases and to see
+how the Parareal algorithm compares to other approaches---since the actual time
 and iterations necessary depend on the system of ODEs to solve.
 
 
@@ -571,7 +594,7 @@ On the other hand, parallelism by space already requires a more problem-specific
 design. Parallelism by space is intuitive, and conceptually, is embarrassingly parallel and easier to create. However, the
 limitations are in the requirement for the code to be designed for the
 problem---how to divide by space so as to allow for the maximum number of even
-divisions. The lack of generality is not as beautiful as the parareal algorithm
+divisions. The lack of generality is not as beautiful as the Parareal algorithm
 but may lend itself to faster speedups.
 
 TODO WRITE ABOUT BETTER DATA COLLECTION
@@ -579,7 +602,7 @@ TODO WRITE ABOUT BETTER DATA COLLECTION
 \section{Conclusion and Future Work}
 
 All in all, we have implemented and begun to explore some techniques of looking
-for strong and weak scaling efficiencies for solving ODEs. The parareal
+for strong and weak scaling efficiencies for solving ODEs. The Parareal
 algorithm is beautiful in its theoretical advantages---in terms of stability,
 error and efficiency. However, the method, as a very generalized method,
 requires deeper analysis for the specific problem. The main variable will be in
@@ -591,6 +614,7 @@ computed and optimized for would be problem specific.
 \bibliographystyle{unsrt}
 \bibliography{paper}
 
-Bibtex Citations for the Slides, and for \url{https://www.sharcnet.ca/help/index.php/Measuring_Parallel_Scaling_Performance}
+\section{Appendix}
+\subsection{Explanation of Code Files}
 
 \end{document}
