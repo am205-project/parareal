@@ -582,8 +582,9 @@ further explore the Parareal algorithm would involve many test cases and to see
 how the Parareal algorithm compares to other approaches---since the actual time
 and iterations necessary depend on the system of ODEs to solve.
 
+Some drawbacks also include the use of the \verb|mpi4py| library instead of the MPI libraries in C++. Because \verb|mpi4py| is a set of Python bindings for MPI, based on the standard MPI-2 C++ bindings, there is additional overhead involved with mapping \verb|mpi4py| commands to the standard C++ library. For example, since Python is dynamically typed, additional information about size may first need to be sent as a part of the Python bindings, creating greater overhead as compared to the C++ libraries. In addition, C++ compilers may be more optimizable according to specific use case, as specific \verb|-o| flags or other compiler shortcuts may be specified directly, rather than through a standard wrapper class as provided by \verb|mpi4py|.
 
-TODO NUMPY WRITE FATST HING
+\textbf{something here about parareal? ashi}
 
 On the other hand, parallelism by space already requires a more problem-specific
 design. Parallelism by space is intuitive, and conceptually, is embarrassingly parallel and easier to create. However, the
