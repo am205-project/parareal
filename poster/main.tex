@@ -196,8 +196,6 @@ approximation to the analytic operator so we may replace $g_{\textnormal{fine}}
 solution operator $g_{\Delta t}$ and fine operator $g$ is $mk$. Can be proved by
 induction. 
 
-SHALL WE DO IT THEN?
-
 \textbf{Stability}
 
 With the Parareal method, it is possible to combine ODE solvers. Stability
@@ -229,7 +227,7 @@ that $t + k(t + Qt/N) < Qt$, or $k < \frac{Q - 1}{1 + Q/N}$ or $N > \frac{Qk}{Q
 
 We implemented the Parareal algorithm in Python, using mpi4py to parallelize it.
 Our coarse operator was forward Euler step, with 100 steps, while the fine
-operator was forward Euler, with $Q * 100$ steps, where $Q$ is the quality
+operator was forward Euler, with $Q \cdot 100$ steps, where $Q$ is the quality
 factor. We tested the Parareal algorithm on two sets of differential equations:
 
 \[
