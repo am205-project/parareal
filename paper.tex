@@ -573,18 +573,23 @@ Note that as the workload assigned to each processing element stays constant and
 
 \subsection{Possible Optimizations and Future Work}
 
-We see that (HOPE IT WORKS WELL OR ELSE...) Most of the further work would be in
-optimization. We are trying to measure performance in Python, which is not the
-ideal benchmarking language for efficiency and speedups. A port over to C++
-using the MPI libraries in C++ rather than the mpi4py libraries in python would
-be ideal. Other optimizations mentioned above could also be implemented. To
-further explore the Parareal algorithm would involve many test cases and to see
-how the Parareal algorithm compares to other approaches---since the actual time
-and iterations necessary depend on the system of ODEs to solve.
+We do not see the theoretical speedups and error convergence in our experimental
+tests of the Parareal algorithm. In the future, we would like to debug our
+implementation of the algorithm and apply it to more complicated systems of ODEs
+and more expensive and higher fine operators $g_{\textnormal{fine}}$. We also
+would like to test different combinations of $k$ and $Q$ and see how the error
+converges after varying step size. 
+
+More further work could be in optimization. We are trying to measure performance
+in Python, which is not the ideal benchmarking language for efficiency and
+speedups. A port over to C++ using the MPI libraries in C++ rather than the
+mpi4py libraries in python would be ideal. Other optimizations mentioned above
+could also be implemented. To further explore the Parareal algorithm would
+involve many test cases and to see how the Parareal algorithm compares to other
+approaches---since the actual time and iterations necessary depend on the system
+of ODEs to solve.
 
 Some drawbacks also include the use of the \verb|mpi4py| library instead of the MPI libraries in C++. Because \verb|mpi4py| is a set of Python bindings for MPI, based on the standard MPI-2 C++ bindings, there is additional overhead involved with mapping \verb|mpi4py| commands to the standard C++ library. For example, since Python is dynamically typed, additional information about size may first need to be sent as a part of the Python bindings, creating greater overhead as compared to the C++ libraries. In addition, C++ compilers may be more optimizable according to specific use case, as specific \verb|-o| flags or other compiler shortcuts may be specified directly, rather than through a standard wrapper class as provided by \verb|mpi4py|.
-
-\textbf{something here about parareal? ashi}
 
 On the other hand, parallelism by space already requires a more problem-specific
 design. Parallelism by space is intuitive, and conceptually, is embarrassingly parallel and easier to create. However, the
@@ -593,9 +598,8 @@ problem---how to divide by space so as to allow for the maximum number of even
 divisions. The lack of generality is not as beautiful as the Parareal algorithm
 but may lend itself to faster speedups.
 
-TODO WRITE ABOUT BETTER DATA COLLECTION
 
-\section{Conclusion and Future Work}
+\section{Conclusion}
 
 All in all, we have implemented and begun to explore some techniques of looking
 for strong and weak scaling efficiencies for solving ODEs. The Parareal
