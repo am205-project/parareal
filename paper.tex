@@ -317,7 +317,7 @@ N &> \frac{Qk}{Q - 1 - k} \\
 \end{aligned}
 \]
 
-This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, $k$, is important for error convergence to that of $g_{\textnormal{fine}}$.  However, finding the optimal $k$ is a problem-specific parameter and traded off for the desired accepted error.
+This can be tuned with by either adjusting the the quality factor or reducing the number of iterations, but the number of iterations, $k$, is important for error convergence to that of $g_{\textnormal{fine}}$. However, finding the optimal $k$ is a problem-specific parameter and traded off for the desired accepted error.
 
 \subsubsection{Parallel By Space}
 
@@ -325,7 +325,7 @@ For the parallelism by space, we are dividing our grid on which we which to solv
 
 \subsection{Incorporating Communication}
 
-To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$ explained in the below table.
+To delve one step deeper in our analysis, parallel communications are usually expressed by architecture parameters - $\alpha$, $\beta$ and $\gamma$ explained in the below table.  The expressions measure the communitation times spent by each processor (on average as not all processors may communicate equally depending on the size of the problem). This helps model the communication overhead.
 
 \begin{table}
 \centering
@@ -335,6 +335,8 @@ To delve one step deeper in our analysis, parallel communications are usually ex
 $\alpha$ & Latency of communication. (sec)\\
 $\beta$ & Inverse communication bandwidth. (sec/byte)\\
 $\gamma$ & Inverse computational performance. (sec/flop)\\
+$n$ & Number of processors\\
+$P$ & Abstracted problem size\\
 \hline
 \end{tabular}
 \caption{Table of Communication Architecture Parameters}
@@ -342,11 +344,17 @@ $\gamma$ & Inverse computational performance. (sec/flop)\\
 \end{table}
 
 \subsubsection{Parareal}
-TODO THIS IS CONFUSING Wesley
+For the parareal method, the communications are solely group communications, a broadcast and gather for each corrective iteration, so 2k $\alpha$.  The $\beta$ term is from the amount being sent - which is one vector for the results of the $g_{\Delta t}$. Finally the cost of the computation we seek to multiply $\gamma$ by an abstract function $\xi(P_n)$ which returns the cost in flops of computing on the input block, $P_n$.
+\[
+C_{\textnormal{parareal}} = \alpha*2k +  \beta \cdot kt + \gamma \cdot \xi(kQt/n)
+\]
 
 
 \subsubsection{Parallel By Space}
-TODO THIS IS CONFUSING TOO Wesley
+The main communication of the parallel in space method is the sendrecv (a round robin style send and receive for the ghost pounts - the corners have 2 pairs of sendrecvs) which contribute to 4 $\alpha$ plus the initial scatter and final gather each with an $\alpha$ term.  The amount comunicated is the answer as well as the original broadcasted space which includes boundary points. Then, as before, there will be the gamma term multiplied into the computation of the component - given again by an abstract function $\xi(P_n)$ which returns the cost in flops of computing on the input block, $P_n$. 
+\[
+C_{\textnormal{paraspace}} \leq \alpha \cdot 6 + \beta \cdot P/n + \gamma \cdot \xi(P/n)
+\]
 
 \subsection{Amdahl's Law Analysis}
 
@@ -418,7 +426,7 @@ Due to the sheer number of things to explore, we usually try to compare each run
 \section{Results and Discussion}
 
 \subsection{Expectations}
-We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations),
+We hoped to show that under the properly tuned parameters (namely the $k$ number of iterations), we would get error for the Parareal method that would approach that of running $g_{\textnormal{fine}}$. There would be some convergence above which increasing $k$ would not help convergence by as much. The expectation was that we would only being to see the best speedups for the Parareal algorithm with large $n$ due to the strong scaling. With limited access to processors, we expected to see speedup comparing the Parareal algorithm to itself but not necessaily to the evaluation of $g_{\textnormal{fine}}$. Finally, we fully expect the parallel in space algorithm to demonstrate good weak scaling, as well as for it to be faster overall since it is a more embarassingly parallel design. As disclaimed before, the main tradeoff for the parallel in space method is the lack of extensiblily across different ODEs applications.
 
 \subsection{General Remarks about Results}
 LETS SEE IF I HAVE TO DISCLAIM ANY GLOBAL FAILURES IN OUR RESULTS
