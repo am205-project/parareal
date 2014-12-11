@@ -53,12 +53,20 @@ Harvard University, Applied Math 205 Final Project}
 %\begin{@twocolumnfalse}
 \maketitle
 \begin{abstract}
-We look to achieve strong scaling in parallelizing numerical ODE methods. We test both parallelism by result space as well as parallelism by time, with the Parareal algorithm, to solve various ODEs. We measure performance and compare in terms of accuracy, speedup and efficiency. We provide some theoretical analysis for the Parareal algorithm and compare its tradeoff to paralleism by space, For the Parareal agorithm, we observe
-light speedups in our small scale tests up to 64 processors on Harvard's
-Odyssey cluster. We analyze possible reasons as to why our implementation
-may not be ideal and some tradeoffs that are taken in the Parareal
-implementation. Further optimizations are proposed and rationalized as next
-steps including ports of to C++ using BLAS. Our code is written in python using mpi4py. We compare tests from various data sources from basic exponential ODEs to larger grids of ODEs to solve for in applications like diffusion and sound wave propagation.
+We look to achieve strong scaling in parallelizing numerical ODE methods. We
+test both parallelism by result space as well as parallelism by time, with the
+Parareal algorithm, to solve various ODEs. We measure performance and compare in
+terms of accuracy, speedup and efficiency. We provide some theoretical analysis
+for the Parareal algorithm's runtime, speedup, error convergence, and stability.
+For the Parareal agorithm, we observe preliminary promising but not convincing
+results in our small scale tests up to 32 processors on Harvard's Odyssey
+computing cluster. We analyze possible reasons as to why our implementation may
+not be ideal and some tradeoffs that are taken in the Parareal implementation.
+Further optimizations are proposed and rationalized as next steps including
+ports of to C++ using BLAS. Our code is written in python using mpi4py. We
+compare tests from various data sources from basic exponential ODEs to larger
+grids of ODEs to solve for in applications like diffusion and sound wave
+propagation.
 
 \end{abstract}
 %\end{@twocolumnfalse}
@@ -426,7 +434,7 @@ In general, we were unable to see the promised theoretical speedups and error
 convergence for the Parareal algorithm. We believe this could be because of
 several factors. First, we may have some subtle bugs in our implementation of
 the Parareal algorithms. Additionally, we only tested our implementation on
-relatively simple problems.  he problem with this testing approach is that the
+relatively simple problems. The problem with this testing approach is that the
 fine serial computation of the solution $g_{\textnormal{fine}}$ is very cheap.
 We did not see the running time of the Parareal beat that for the serial
 implementation of $g_{\textnormal{fine}}$. If we tested our implementation for
